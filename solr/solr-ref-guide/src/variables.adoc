@@ -1,0 +1,269 @@
+= Variables
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+== The Let Expressions
+
+The `let` expression sets variables and and by default returns
+the last variable. The output of any math expression can be set
+to a variable.
+
+Below is a simple example setting three variables `a`, `b`
+and `c`. `a` and `b` are set to arrays. The variable `c` is set
+to the output of the `ebeAdd` function which performs element-by-element
+addition of the two arrays.
+
+[source,text]
+----
+let(a=array(1, 2, 3),
+    b=array(10, 20, 30),
+    c=ebeAdd(a, b))
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "c": [
+          11,
+          22,
+          33
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 4
+      }
+    ]
+  }
+}
+----
+
+== Echoing Variables
+
+All variables can be output by setting the `echo` variable to `true`.
+
+[source,text]
+----
+let(echo=true,
+    a=array(1, 2, 3),
+    b=array(10, 20, 30),
+    c=ebeAdd(a, b))
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "a": [
+          1,
+          2,
+          3
+        ],
+        "b": [
+          10,
+          20,
+          30
+        ],
+        "c": [
+          11,
+          22,
+          33
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
+
+A specific set of variables can be echoed by providing a comma delimitted
+list for the echo parameter.
+
+[source,text]
+----
+let(echo="a,b",
+    a=array(1, 2, 3),
+    b=array(10, 20, 30),
+    c=ebeAdd(a, b))
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "a": [
+          1,
+          2,
+          3
+        ],
+        "b": [
+          10,
+          20,
+          30
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
+
+== Assigning Streams to Variables
+
+Streaming expressions can also be used inside of a `let` expression
+in the following ways:
+
+* A variable can be set to the output of any streaming expression.
+* A streaming expression can be executed after all variables have been set. The variables can then be referenced by the streaming expression that is executed. The `let` expression will stream the tuples that are emitted by the final streaming expression.
+
+Here is a very simple example:
+
+[source,text]
+----
+let(a=random(collection2, q="*:*", rows="3", fl="price_f"),
+    b=random(collection2, q="*:*", rows="3", fl="price_f"),
+    tuple(sample1=a, sample2=b))
+----
+
+The `let` expression above is setting variables `a` and `b` to random
+samples taken from collection2.
+
+The `let` function then executes the `tuple` streaming expression
+which references the two variables.
+
+Here is the output:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "sample1": [
+          {
+            "price_f": 0.39729273
+          },
+          {
+            "price_f": 0.063344836
+          },
+          {
+            "price_f": 0.42020327
+          }
+        ],
+        "sample2": [
+          {
+            "price_f": 0.659244
+          },
+          {
+            "price_f": 0.58797807
+          },
+          {
+            "price_f": 0.57520163
+          }
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 20
+      }
+    ]
+  }
+}
+----
+
+== Creating Arrays with the *col* Function
+
+The `col` function is used to move a column of numbers from a list of
+tuples into an `array`.
+
+This is an important function because streaming expressions such as `sql`,
+`random` and `timeseries` return tuples, but the
+math expressions often operate on arrays or matrices.
+
+Below is an example of the `col` function:
+
+[source,text]
+----
+let(a=random(collection2, q="*:*", rows="3", fl="price_f"),
+    b=random(collection2, q="*:*", rows="3", fl="price_f"),
+    c=col(a, price_f),
+    d=col(b, price_f),
+    tuple(sample1=c, sample2=d))
+----
+
+The example above is using the `col` function to create arrays
+from the tuples stored in variables `a` and `b`.
+
+Variable `c` contains an array of values from the `price_f` field,
+taken from the tuples stored in variable `a`.
+
+Variable `d` contains an array of values from the `price_f` field,
+taken from the tuples stored in variable `b`.
+
+Also notice inn that the response `tuple` executed by `let` is pointing
+to the arrays in variables `c` and `d`.
+
+The response shows the arrays:
+
+[source,json]
+----
+
+{
+  "result-set": {
+    "docs": [
+      {
+        "sample1": [
+          0.06490427,
+          0.6751543,
+          0.07063508
+        ],
+        "sample2": [
+          0.8884564,
+          0.8878821,
+          0.3504665
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 17
+      }
+    ]
+  }
+}
+----
