@@ -1,0 +1,460 @@
+= Matrices and Matrix Math
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+Matrices are ubiquitous in statistics, probability, linear algebra, machine learning
+and many other areas of math. The math expression library
+has support for creation and manipulation of
+matrices as well as a
+growing library of matrix math functions. This section of the user
+guide covers
+basics of matrix creation, manipulation and matrix math. Other sections
+of the user guide demonstrate how matrices are used with the statistics,
+probability and machine learning functions.
+
+== Matrix Creation
+
+A matrix can be created with the `matrix` function.
+
+The matrix function wraps a list of `arrays` and returns a matrix
+represented as a multi-dimensional array.
+
+The example below creates a two-by-two matrix.
+
+[source,text]
+----
+matrix(array(1, 2), array(4, 5))
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "return-value": [
+          [
+            1,
+            2
+          ],
+          [
+            4,
+            5
+          ]
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+----
+
+== Accessing Rows and Columns
+
+The rows and columns of a matrix can be accessed using the `rowAt`
+and `colAt` functions. All examples going forward will use
+variables to make
+them easier to understand.
+
+The example below creates a 2 by 2 matrix and returns the column
+at index 1 and an array.
+
+[source,text]
+----
+let(a=array(1, 2),
+    b=array(4, 5),
+    c=matrix(a, b),
+    d=colAt(c, 1))
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "d": [
+          2,
+          5
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
+
+== Row and Column Labels
+
+A matrix can have column rows and labels. The functions
+`setRowLabels`, `setColumnLabels`, `getRowLabels` and `getColumnLabels`
+can be used to set and get the labels. The actual labels themselves
+are set using an array of strings.
+
+The example below explicity sets the labels. In other sections of the
+user guide examples are shown where machine learning or other types
+of functions return matrices with labels already set.
+
+Below is simple example of setting and getting row and column labels
+on a matrix.
+
+[source,text]
+----
+let(echo="f, g",
+    a=array(1, 2),
+    b=array(4, 5),
+    c=matrix(a, b),
+    d=setRowLabels(c, array(row0, row1)),
+    e=setColumnLabels(c, array(col0, col1)),
+    f=getRowLabels(c),
+    g=getColumnLabels(c))
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "f": [
+          "row0",
+          "row1"
+        ],
+        "g": [
+          "col0",
+          "col1"
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
+
+== Matrix Attributes
+
+A matrix can also have an arbitrary set of named attributes associated
+with it. Certain functions such as the `termVectors` function
+return matrices that contain attributes that describe data in the matrix.
+Consult the specific function documentation to determine if
+attributes are returned with the matrix.
+
+Attributes can be retrieved by name using the `getAttribute` function and
+the entire attribute map can be returned using the `getAttributes`
+function.
+
+== Matrix Dimensions
+
+The dimensions of a matrix can be determined using the
+`rowCount` and `columnCount` functions.
+
+The example below retrieves the dimensions of a matrix.
+
+[source,text]
+----
+let(echo="d,e",
+    a=array(1, 2, 3),
+    b=array(4, 5, 6),
+    c=matrix(a, b),
+    d=rowCount(c),
+    e=columnCount(c))
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "d": 2,
+        "e": 3
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
+
+== Matrix Transposition
+
+A matrix can be https://en.wikipedia.org/wiki/Transpose[transposed]
+using the `transpose` function.
+
+An example of matrix transposition is shown below:
+
+[source,text]
+----
+let(a=array(1, 2),
+    b=array(4, 5),
+    c=matrix(a, b),
+    d=transpose(c))
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "d": [
+          [
+            1,
+            4
+          ],
+          [
+            2,
+            5
+          ]
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 24
+      }
+    ]
+  }
+}
+----
+
+== Matrix Summations
+
+The rows and columns of a matrix can be summed with the `sumRows` and `sumColumns` functions.
+Below is an example of the `sumRows` function, which returns an
+array with the sum of each row.
+
+
+[source,text]
+----
+let(a=array(1, 2, 3),
+    b=array(4, 5, 6),
+    c=matrix(a, b),
+    d=sumRows(c))
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "d": [
+          6,
+          15
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 2
+      }
+    ]
+  }
+}
+----
+
+The `grandSum` function returns the sum of all values in the matrix. Below is an example of the `grandSum` function:
+
+[source,text]
+----
+let(a=array(1, 2, 3),
+    b=array(4, 5, 6),
+    c=matrix(a, b),
+    d=grandSum(c))
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "d": 21
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
+
+
+== Scalar Matrix Math
+
+The same scalar math functions that apply to vectors can also be applied to matrices: `scalarAdd`, `scalarSubtract`,
+`scalarMultiply`, `scalarDivide`. Below is an example of `scalarAdd` function which adds a scalar value to every
+element in a matrix.
+
+
+[source,text]
+----
+let(a=array(1, 2),
+    b=array(4, 5),
+    c=matrix(a, b),
+    d=scalarAdd(10, c))
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "d": [
+          [
+            11,
+            12
+          ],
+          [
+            14,
+            15
+          ]
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
+
+
+== Matrix Addition and Subtraction
+
+Two matrices can be added and subtracted using the `ebeAdd` and `ebeSubtract` functions, which perform element-by-element addition
+and subtraction of matrices.
+
+Below is a simple example of an element-by-element addition of a matrix by itself:
+
+[source,text]
+----
+let(a=array(1, 2),
+    b=array(4, 5),
+    c=matrix(a, b),
+    d=ebeAdd(c, c))
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "d": [
+          [
+            2,
+            4
+          ],
+          [
+            8,
+            10
+          ]
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
+
+== Matrix Multiplication
+
+Matrix multiplication can be done using the `matrixMult` function. Below is a simple
+example of matrix multiplication:
+
+[source,text]
+----
+let(a=array(1, 2),
+    b=array(4, 5),
+    c=matrix(a, b),
+    d=array(11, 12),
+    e=array(14, 15),
+    f=matrix(d, e),
+    g=matrixMult(c, f))
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "g": [
+          [
+            39,
+            42
+          ],
+          [
+            114,
+            123
+          ]
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----

@@ -26,6 +26,17 @@ from textwrap import dedent
 # Example: Checking out Revision e441a99009a557f82ea17ee9f9c3e9b89c75cee6 (refs/remotes/origin/master)
 reGitRev = re.compile(r'Checking out Revision (\S+)\s+\(refs/remotes/origin/([^)]+)')
 
+#         Policeman Jenkins example:           [Lucene-Solr-7.x-Linux] $ /var/lib/jenkins/tools/hudson.tasks.Ant_AntInstallation/ANT_1.8.2/bin/ant "-Dargs=-XX:-UseCompressedOops -XX:+UseConcMarkSweepGC" jenkins-hourly
+# Policeman Jenkins Windows example:      [Lucene-Solr-master-Windows] $ cmd.exe /C "C:\Users\jenkins\tools\hudson.tasks.Ant_AntInstallation\ANT_1.8.2\bin\ant.bat '"-Dargs=-client -XX:+UseConcMarkSweepGC"' jenkins-hourly && exit %%ERRORLEVEL%%"
+#               ASF Jenkins example:        [Lucene-Solr-Tests-master] $ /home/jenkins/tools/ant/apache-ant-1.8.4/bin/ant jenkins-hourly
+#       ASF Jenkins nightly example:                        [checkout] $ /home/jenkins/tools/ant/apache-ant-1.8.4/bin/ant -file build.xml -Dtests.multiplier=2 -Dtests.linedocsfile=/home/jenkins/jenkins-slave/workspace/Lucene-Solr-NightlyTests-master/test-data/enwiki.random.lines.txt jenkins-nightly
+#        ASF Jenkins smoker example: [Lucene-Solr-SmokeRelease-master] $ /home/jenkins/tools/ant/apache-ant-1.8.4/bin/ant nightly-smoke
+reAntInvocation = re.compile(r'\bant(?:\.bat)?\s+.*(?:jenkins-(?:hourly|nightly)|nightly-smoke)')
+reAntSysprops = re.compile(r'"-D[^"]+"|-D[^=]+="[^"]*"|-D\S+')
+
+#            sarowe Jenkins example: + export 'ANT_OPTS=-Xmx1150m -XX:+CMSClassUnloadingEnabled -Djava.awt.headless=true -Dargs="-Xmx1g"'
+reAntOptions = re.compile(r"export\s+'?\s*ANT_OPTS=([^'\n\r]+)")
+
 # Method example: NOTE: reproduce with: ant test  -Dtestcase=ZkSolrClientTest -Dtests.method=testMultipleWatchesAsync -Dtests.seed=6EF5AB70F0032849 -Dtests.slow=true -Dtests.locale=he-IL -Dtests.timezone=NST -Dtests.asserts=true -Dtests.file.encoding=UTF-8
 # Suite example:  NOTE: reproduce with: ant test  -Dtestcase=CloudSolrClientTest -Dtests.seed=DB2DF2D8228BAF27 -Dtests.multiplier=3 -Dtests.slow=true -Dtests.locale=es-AR -Dtests.timezone=America/Argentina/Cordoba -Dtests.asserts=true -Dtests.file.encoding=US-ASCII
 reReproLine = re.compile(r'NOTE:\s+reproduce\s+with:(\s+ant\s+test\s+-Dtestcase=(\S+)\s+(?:-Dtests.method=\S+\s+)?(.*))')
@@ -63,8 +74,8 @@ def readConfig():
                                    description=description)
   parser.add_argument('url', metavar='URL',
                       help='Points to the Jenkins log to parse')
-  parser.add_argument('--no-fetch', dest='fetch', action='store_false', default=True,
-                      help='Do not run "git fetch" prior to "git checkout"')
+  parser.add_argument('--no-git', dest='useGit', action='store_false', default=True,
+                      help='Do not run "git" at all')
   parser.add_argument('--iters', dest='testIters', type=int, default=defaultIters, metavar='N',
                       help='Number of iterations per test suite (default: %d)' % defaultIters)
   return parser.parse_args()
@@ -90,7 +101,9 @@ def run(cmd, rememberFailure=True):
 def fetchAndParseJenkinsLog(url):
   global revisionFromLog
   global branchFromLog
+  global antOptions
   revisionFromLog = None
+  antOptions = ''
   tests = {}
   print('[repro] Jenkins log URL: %s\n' % url)
   try:
@@ -109,6 +122,16 @@ def fetchAndParseJenkinsLog(url):
             testcase = match.group(2)
             reproLineWithoutMethod = match.group(3).strip()
             tests[testcase] = reproLineWithoutMethod
+          else:
+            match = reAntInvocation.search(line)
+            if match is not None:
+              antOptions = ' '.join(reAntSysprops.findall(line))
+            else:
+              match = reAntOptions.search(line)
+              if match is not None:
+                antOptions = ' '.join(reAntSysprops.findall(line))
+    if len(antOptions) > 0:
+      print('[repro] Ant options: %s' % antOptions)
   except urllib.error.URLError as e:
     raise RuntimeError('ERROR: fetching %s : %s' % (url, e))
   
@@ -123,18 +146,19 @@ def fetchAndParseJenkinsLog(url):
     sys.exit(0)
   return tests
 
-def prepareWorkspace(fetch, gitRef):
+def prepareWorkspace(useGit, gitRef):
   global gitCheckoutSucceeded
-  if fetch:
+  if useGit:
     code = run('git fetch')
     if 0 != code:
       raise RuntimeError('ERROR: "git fetch" failed.  See above.')
-  checkoutCmd = 'git checkout %s' % gitRef
-  code = run(checkoutCmd)
-  if 0 != code:
-    raise RuntimeError('ERROR: "%s" failed.  See above.' % checkoutCmd)
-  gitCheckoutSucceeded = True
-  run('git merge --ff-only', rememberFailure=False) # Ignore failure on non-branch ref
+    checkoutCmd = 'git checkout %s' % gitRef
+    code = run(checkoutCmd)
+    if 0 != code:
+      raise RuntimeError('ERROR: "%s" failed.  See above.' % checkoutCmd)
+    gitCheckoutSucceeded = True
+    run('git merge --ff-only', rememberFailure=False) # Ignore failure on non-branch ref
+  
   code = run('ant clean')
   if 0 != code:
     raise RuntimeError('ERROR: "ant clean" failed.  See above.')
@@ -161,7 +185,7 @@ def groupTestsByModule(tests):
 
 def runTests(testIters, modules, tests):
   cwd = os.getcwd()
-  testCmdline = 'ant test-nocompile -Dtests.dups=%d -Dtests.maxfailures=%d -Dtests.class="%s" -Dtests.showOutput=onerror %s'
+  testCmdline = 'ant test-nocompile -Dtests.dups=%d -Dtests.maxfailures=%d -Dtests.class="%s" -Dtests.showOutput=onerror %s %s'
   for module in modules:
     moduleTests = list(modules[module])
     testList = '|'.join(map(lambda t: '*.%s' % t, moduleTests))
@@ -172,7 +196,7 @@ def runTests(testIters, modules, tests):
     try:
       if 0 != code:
         raise RuntimeError("ERROR: Compile failed in %s/ with code %d.  See above." % (module, code))
-      run(testCmdline % (testIters, testIters * numTests, testList, params))
+      run(testCmdline % (testIters, testIters * numTests, testList, antOptions, params))
     finally:
       os.chdir(cwd)
       
@@ -207,46 +231,48 @@ def getLocalGitBranch():
 def main():
   config = readConfig()
   tests = fetchAndParseJenkinsLog(config.url)
-  localGitBranch = getLocalGitBranch()
+  if config.useGit:
+    localGitBranch = getLocalGitBranch()
 
   try:
-    prepareWorkspace(config.fetch, revisionFromLog)
+    prepareWorkspace(config.useGit, revisionFromLog)
     modules = groupTestsByModule(tests)
     runTests(config.testIters, modules, tests)
     failures = printReport(config.testIters, '')
     
-    # Retest 100% failures at the tip of the branch
-    oldTests = tests
-    tests = {}
-    for fullClass in failures:
-      testcase = fullClass[(fullClass.rindex('.') + 1):]
-      if failures[fullClass] == config.testIters:
-        tests[testcase] = oldTests[testcase]
-    if len(tests) > 0:
-      print('\n[repro] Re-testing 100%% failures at the tip of %s' % branchFromLog)
-      prepareWorkspace(False, branchFromLog)
-      modules = groupTestsByModule(tests)
-      runTests(config.testIters, modules, tests)
-      failures = printReport(config.testIters, ' at the tip of %s' % branchFromLog)
-      
-      # Retest 100% tip-of-branch failures without a seed
+    if config.useGit:
+      # Retest 100% failures at the tip of the branch
       oldTests = tests
       tests = {}
       for fullClass in failures:
         testcase = fullClass[(fullClass.rindex('.') + 1):]
         if failures[fullClass] == config.testIters:
-          tests[testcase] = re.sub(reTestsSeed, '', oldTests[testcase])
+          tests[testcase] = oldTests[testcase]
       if len(tests) > 0:
-        print('\n[repro] Re-testing 100%% failures at the tip of %s without a seed' % branchFromLog)
+        print('\n[repro] Re-testing 100%% failures at the tip of %s' % branchFromLog)
         prepareWorkspace(False, branchFromLog)
         modules = groupTestsByModule(tests)
         runTests(config.testIters, modules, tests)
-        printReport(config.testIters, ' at the tip of %s without a seed' % branchFromLog)
+        failures = printReport(config.testIters, ' at the tip of %s' % branchFromLog)
+      
+        # Retest 100% tip-of-branch failures without a seed
+        oldTests = tests
+        tests = {}
+        for fullClass in failures:
+          testcase = fullClass[(fullClass.rindex('.') + 1):]
+          if failures[fullClass] == config.testIters:
+            tests[testcase] = re.sub(reTestsSeed, '', oldTests[testcase])
+        if len(tests) > 0:
+          print('\n[repro] Re-testing 100%% failures at the tip of %s without a seed' % branchFromLog)
+          prepareWorkspace(False, branchFromLog)
+          modules = groupTestsByModule(tests)
+          runTests(config.testIters, modules, tests)
+          printReport(config.testIters, ' at the tip of %s without a seed' % branchFromLog)
   except Exception as e:
     print('[repro] %s' % traceback.format_exc())
     sys.exit(1)
   finally:
-    if gitCheckoutSucceeded:
+    if config.useGit and gitCheckoutSucceeded:
       run('git checkout %s' % localGitBranch, rememberFailure=False) # Restore original git branch/sha
 
   print('[repro] Exiting with code %d' % lastFailureCode)

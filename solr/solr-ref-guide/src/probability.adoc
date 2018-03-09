@@ -1,0 +1,341 @@
+= Probability Distributions
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+This section of the user guide covers the
+*probability distribution
+framework* included in the math expressions library.
+
+== Probability Distributions
+
+The probability distribution framework includes
+many of the most commonly used *real* and *discrete* probability
+distributions, including support for *empirical* and
+*enumerated* distributions that model real world data.
+
+The probability distribution framework also includes a set
+of functions that operate on probability distributions
+to support probability calculations and sampling.
+
+=== Real Distributions
+
+The probability distribution framework has the following functions
+which support the creation of well known real distributions:
+
+`normalDistribution`
+
+Creates a normal distribution function.
+
+`logNormalDistribution`
+
+Creates a log normal distribution function.
+
+`gammaDistribution`
+
+Creates a gamma distribution function.
+
+`betaDistribution`
+
+Creates a beta distribution function.
+
+`uniformDistribution`
+
+Creates a uniform real distribution function.
+
+`weibullDistribution`
+
+Creates a Weibull distribution function.
+
+`triangularDistribution`
+
+Creates a triangular distribution function.
+
+`constantDistribution`
+
+Creates constant real distribution function.
+
+
+=== Empirical Distribution
+
+The `empiricalDistribution` function creates a real probability
+distribution from actual data. An empirical distribution
+can be used interchangeably with any of the theoretical
+real distributions.
+
+=== Discrete
+
+The probability distribution framework has the following functions
+which support the creation of well known discrete distributions:
+
+`poissonDistribution`,
+
+Creates a Poisson distribution function.
+
+`binomialDistribution`,
+
+Creates a binomial distribution function.
+
+`uniformIntegerDistribution`,
+
+Creates a uniform integer distribution function.
+
+`geometricDistribution`,
+
+Creates a geometric distribution function.
+
+`zipFDistribution`,
+`
+Creates a Zipf distribution function.
+
+=== Enumerated Distributions
+
+The `enumeratedDistribution` function creates a discrete
+distribution function from a data set of discrete values,
+or from and enumerated list of values and probabilities.
+
+Enumerated distribution functions can be used interchangeable
+with any of the theoretical discreet distributions.
+
+
+=== Cumulative Probability
+
+The `cumulativeProbability` function can be used with all
+probability distributions to calculate the
+cumulative probability of a random variable.
+
+Below is example of calculating the cumulative probability
+of a random variable within a normal distribution.
+
+In the example a normal distribution function is created
+with a mean of 10 and a standard deviation of 5. Then
+cumulative probability of the value 12 is calculated for this
+specific distribution.
+
+[source,text]
+----
+let(a=normalDistribution(10, 5),
+    b=cumulativeProbability(a, 12))
+----
+
+When this expression is sent to the /stream handler it responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "b": 0.6554217416103242
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
+
+Below is an example of a cumulative probability calculation
+using an empirical distribution.
+
+In the example an empirical distribution was create from a random
+sample taken from the *price_f* field, which was created
+using a random uniform distribution between 0 and 1.
+
+The cumulative probability of value .75 is then calculated.
+
+[source,text]
+----
+let(a=random(collection1, q="*:*", rows="30000", fl="price_f"),
+     b=col(a, price_f),
+     c=empiricalDistribution(b),
+     d=cumulativeProbability(c, .75))
+----
+
+When this expression is sent to the /stream handler it responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "b": 0.6554217416103242
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
+
+=== Probability
+
+The `probability` function can be used with any discrete
+distribution function to compute the probability a single
+discrete value.
+
+Below is example of calculating the probability
+of a random variable within a poisson distribution.
+
+In the example a Poisson distribution function is created
+with a mean of 100. Then
+probability of the value 101 is calculated for this
+specific distribution.
+
+[source,text]
+----
+let(a=poissonDistribution(100),
+    b=probability(a, 101))
+----
+
+When this expression is sent to the /stream handler it responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "b": 0.039466333474403106
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
+
+Below is an example of a probability calculation
+using an enumerated distribution.
+
+In the example an enumerated distribution was create from a random
+sample taken from the *day_i* field, which was created
+using a random uniform distribution between 0 and 30.
+
+The probability of the value 10 is then calculated.
+
+[source,text]
+----
+let(a=random(collection1, q="*:*", rows="30000", fl="day_i"),
+     b=col(a, day_i),
+     c=enumeratedDistribution(b),
+     d=probability(c, 10))
+----
+
+When this expression is sent to the /stream handler it responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "d": 0.03356666666666666
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 488
+      }
+    ]
+  }
+}
+----
+
+=== Sampling
+
+All probability distributions support sampling. The `sample`
+function returns 1 or more random samples from a probability
+distribution. Sampling is used in Monte Simulations which
+are described in Simulations section of the user guide.
+
+Below is an example of a single sample being taken from
+a normal distribution.
+
+[source,text]
+----
+let(a=normalDistribution(10, 5),
+    b=sample(a))
+----
+
+When this expression is sent to the /stream handler it responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "b": 11.24578055004963
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
+
+Below is an example of 10 samples being taken from a normal
+distribution.
+
+[source,text]
+----
+let(a=normalDistribution(10, 5),
+    b=sample(a, 10))
+----
+
+When this expression is sent to the /stream handler it responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "b": [
+          10.18444709339441,
+          9.466947971749377,
+          1.2420697166234458,
+          11.074501226984806,
+          7.659629052136225,
+          0.4440887839190708,
+          13.710925254778786,
+          2.089566359480239,
+          0.7907293097654424,
+          2.8184587681006734
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 3
+      }
+    ]
+  }
+}
+----
+
+=== Multivariate Normal Distribution
+
+
+

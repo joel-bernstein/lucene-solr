@@ -58,6 +58,9 @@ Changes in Runtime Behavior
 * LUCENE-8134: Index options are no longer automatically downgraded.
   (Adrien Grand)
 
+* LUCENE-8031: Length normalization correctly reflects omission of term frequencies.
+  (Robert Muir, Adrien Grand)
+
 Improvements
 
 * LUCENE-7997: Add BaseSimilarityTestCase to sanity check similarities.
@@ -136,8 +139,6 @@ Improvements
   position sensitive (e.g. part of a phrase) by having an accurate freq.
   (David Smiley)
 
-* LUCENE-8125: ICUTokenizer support for emoji/emoji sequence tokens. (Robert Muir)
-
 * LUCENE-8129: A Unicode set filter can now be specified when using ICUFoldingFilter.
   (Ere Maijala)
 
@@ -187,8 +188,6 @@ Other
 
 * LUCENE-8111: IndexOrDocValuesQuery Javadoc references outdated method name.
   (Kai Chan via Adrien Grand)
-
-* LUCENE-8122: Upgrade analysis/icu to ICU 60.2. (Robert Muir)
 
 * LUCENE-8106: Add script (reproduceJenkinsFailures.py) to attempt to reproduce
   failing tests from a Jenkins log. (Steve Rowe)
