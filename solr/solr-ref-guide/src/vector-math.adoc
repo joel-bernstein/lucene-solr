@@ -154,13 +154,79 @@ When this expression is sent to the /stream handler it responds with:
 }
 ----
 
-== Vector Math
+== Vector Summarizations and Norms
 
-There are a set of functions that perform mathematical
-operations on arrays. For example the `scalarMultiply` function
-multiplies each element of an array by a scalar value.
+There are a set of functions that perform
+summerizations and return norms of arrays. These functions
+operate over an array and return a single
+value. The following vector summarizations and norm functions are available:
+`mult`, `add`, `sumSq`, `mean`, `l1norm`, `l2norm`, `linfnorm`.
 
-The expression below performs the scalar multiplication:
+The example below is using the `mult`,
+which multiples all the values of an array.
+
+[source,text]
+----
+mult(array(2,4,8))
+----
+
+When this expression is sent to the /stream handler it responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "return-value": 64
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
+
+The vector norm functions provide different formulas for calculating vector magnitude.
+
+The example below performs the l2norm
+calculation on an array.
+
+[source,text]
+----
+l2norm(array(2,4,8))
+----
+
+When this expression is sent to the /stream handler it responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "return-value": 9.16515138991168
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
+
+== Scalar Vector Math
+
+Scalar vector math function add, subtract, multiple or divide a scalar value with every value in a vector.
+The names of the scalar vector math functions are: `scalarAdd`, `scalarSubtract`, `scalarMultiply`
+and `scalarDivide`.
+
+
+Below is an example of a `scalarMultiply` function which is multiplying a the scalar value 3 with
+every value of an array.
 
 [source,text]
 ----
@@ -190,9 +256,12 @@ When this expression is sent to the /stream handler it responds with:
 }
 ----
 
-Arrays can be subtracted with the `ebeSubtract` function which
-performs and element-by-element subtract of two arrays.
-The expression below performs the element-by-element subtraction.
+== Element-By-Element Vector Math
+
+Two vectors can be added, subtracted, multiplied and divided by using element-by-element vector math functions.
+The element-by-element vector math functions are `ebeAdd`, `ebeSubtract`, `ebeMultiply`, `ebeDivide`.
+
+The expression below performs the element-by-element subtraction of two arrays.
 
 [source,text]
 ----
@@ -222,68 +291,7 @@ When this expression is sent to the /stream handler it responds with:
 }
 ----
 
-== Vector Sumarizations
+== Dotproduct and Cosine Similarity
 
-There are also a set of functions that perform
-summerizations on arrays. These functions
-operate over an array and return a single
-summary value.
 
-One example of this is the `mult` function
-which multiples all the values of an array.
-
-[source,text]
-----
-mult(array(2,4,8))
-----
-
-When this expression is sent to the /stream handler it responds with:
-
-[source,json]
-----
-{
-  "result-set": {
-    "docs": [
-      {
-        "return-value": 64
-      },
-      {
-        "EOF": true,
-        "RESPONSE_TIME": 0
-      }
-    ]
-  }
-}
-----
-
-Another example of a summary function is
-the `l2norm` function which is
-commonly used to compute vector magnitude.
-
-The example below performs the l2norm
-calculation on an array.
-
-[source,text]
-----
-l2norm(array(2,4,8))
-----
-
-When this expression is sent to the /stream handler it responds with:
-
-[source,json]
-----
-{
-  "result-set": {
-    "docs": [
-      {
-        "return-value": 9.16515138991168
-      },
-      {
-        "EOF": true,
-        "RESPONSE_TIME": 0
-      }
-    ]
-  }
-}
-----
 

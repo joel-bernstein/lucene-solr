@@ -16,15 +16,14 @@
 // specific language governing permissions and limitations
 // under the License.
 
-Matrices are ubiquitous in statistics, probability, linear algebra and
-machine learning as well as many other areas of math. The math
-expression library
-has support for convenient creation and manipulation of
+Matrices are ubiquitous in statistics, probability, linear algebra, machine learning
+and many other areas of math. The math expression library
+has support for creation and manipulation of
 matrices as well as a
 growing library of matrix math functions. This section of the user
 guide covers
 basics of matrix creation, manipulation and matrix math. Other sections
-of the user guide demonstrate how matrices are used in the statistics,
+of the user guide demonstrate how matrices are used with the statistics,
 probability and machine learning functions.
 
 == Matrix Creation
@@ -222,8 +221,8 @@ An example of matrix transposition is shown below:
 
 [source,text]
 ----
-let(a=array(1, 2, 3),
-    b=array(4, 5, 6),
+let(a=array(1, 2),
+    b=array(4, 5),
     c=matrix(a, b),
     d=transpose(c))
 ----
@@ -257,11 +256,205 @@ responds with:
 }
 ----
 
-== Row, Column and Matrix Sums
+== Matrix Summations
+
+The rows and columns of a matrix can be summed with the `sumRows` and `sumColumns` functions.
+Below is an example of the `sumRows` function, which returns an
+array with the sum of each row.
 
 
-== Matrix Scalar Math
+[source,text]
+----
+let(a=array(1, 2, 3),
+    b=array(4, 5, 6),
+    c=matrix(a, b),
+    d=sumRows(c))
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "d": [
+          6,
+          15
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 2
+      }
+    ]
+  }
+}
+----
+
+The `grandSum` function returns the sum of all values in the matrix. Below is an example of the `grandSum` function:
+
+[source,text]
+----
+let(a=array(1, 2, 3),
+    b=array(4, 5, 6),
+    c=matrix(a, b),
+    d=grandSum(c))
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "d": 21
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
 
 
+== Scalar Matrix Math
+
+The same scalar math functions that apply to vectors can also be applied to matrices: `scalarAdd`, `scalarSubtract`,
+`scalarMultiply`, `scalarDivide`. Below is an example of `scalarAdd` function which adds a scalar value to every
+element in a matrix.
+
+
+[source,text]
+----
+let(a=array(1, 2),
+    b=array(4, 5),
+    c=matrix(a, b),
+    d=scalarAdd(10, c))
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "d": [
+          [
+            11,
+            12
+          ],
+          [
+            14,
+            15
+          ]
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
+
+
+== Matrix Addition and Subtraction
+
+Two matrices can be added and subtracted using the `ebeAdd` and `ebeSubtract` functions, which perform element-by-element addition
+and subtraction of matrices.
+
+Below is a simple example of an element-by-element addition of a matrix by itself:
+
+[source,text]
+----
+let(a=array(1, 2),
+    b=array(4, 5),
+    c=matrix(a, b),
+    d=ebeAdd(c, c))
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "d": [
+          [
+            2,
+            4
+          ],
+          [
+            8,
+            10
+          ]
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
 
 == Matrix Multiplication
+
+Matrix multiplication can be done using the `matrixMult` function. Below is a simple
+example of matrix multiplication:
+
+[source,text]
+----
+let(a=array(1, 2),
+    b=array(4, 5),
+    c=matrix(a, b),
+    d=array(11, 12),
+    e=array(14, 15),
+    f=matrix(d, e),
+    g=matrixMult(c, f))
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "g": [
+          [
+            39,
+            42
+          ],
+          [
+            114,
+            123
+          ]
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
