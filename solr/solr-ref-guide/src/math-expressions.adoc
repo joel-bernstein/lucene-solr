@@ -37,7 +37,7 @@ record in your Solr Cloud cluster computable.
 
 == <<matrix-math.adoc, Matrix Math>>
 
-== <<vectorization.adoc, Vectorization>>
+== <<vectorization.adoc, Streams and Vectorization>>
 
 == <<statistics.adoc, Statistics>>
 
