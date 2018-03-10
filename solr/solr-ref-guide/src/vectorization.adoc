@@ -25,70 +25,68 @@ math expressions.
 
 Streaming Expressions have a wide range of stream sources that can be used to
 retrieve data from Solr Cloud collections. Math expressions can be used
-to vectorize the data and analyze the
+to vectorize and analyze the results sets.
 
-Some key stream sources include:
+Below are some of the key stream sources:
 
 === `random`
 
 Random sampling is widely used in statistics, probability and machine learning.
-The `random` Streaming Expression a random sample of search results that match a
-specific query.
+The `random` Streaming Expression returns a random sample of search results that match a
+query.
 
 === `timeseries`
 
 Time series analysis is one of the primary data science use cases. The `timeseries`
-expression provide fast distributed time series aggregations, which can be
-analyzed with math expressions.
+expression provides fast distributed time series aggregations, which can then be
+vectorized and analyzed with math expressions.
 
 === `knnSearch`
 
-The K-nearest algorithm is one of core machine learning algorithm. The `knnSearch`
-function is specialized knn function finds the k-nearest neighbors of a document in
-a distributed document collection. Once the numbers are retrieved they can be vectorized
+The K-nearest neighbor algorithm is a core machine learning algorithm. The `knnSearch`
+function is specialized knn function which finds the k-nearest neighbors of a document in
+a distributed index. Once the nearest neighbors are retrieved they can be vectorized
 and operated on by machine learning and text mining algorithms.
 
 === `sql`
 
-SQL is the primary query language used by data scientist. The `sql` function allows
-for data retrieval using subset SQL that supports both full text search and
+SQL is the primary query language used by data scientists. The `sql` function supports
+data retrieval using a subset of SQL which includes both full text search and
 fast distributed aggregations. The result sets can then be vectorized and operated
 on by math expressions.
 
 === `topic`
 
-Messaging provides an important foundation for large scale computing. The `topic` function
-provides publish/subscribe messaging by treating an entire Solr Cloud collection as message
-queue. Topics are extremely powerful because the allow for subscriptions that match any
-Solr query. As new documents are published that match the topic query they can be
-operated on by math expressions, providing powering AI alerting capabilities.
+Messaging is an important foundational technology for large scale computing. The `topic`
+function provides publish/subscribe messaging capabilities by treating
+Solr Cloud as a distributed meassage queue. Topics are extremely powerful
+because they allow subscription by query. Topics can be use to support a broad set of
+use cases including bulk text mining operations and AI alerting.
 
 === `nodes`
 
-Graph traversal is primary tool for recommendation engines and also is key
-tool in machine learning. The `nodes` function provides fast, distributed, breadth
-first graph traversal for documents in a Solr Cloud collection. The node sets collected
-by graph traversal can be operated on by statistical and machine learning math
-expressions to gain more insight into the graph and provide better recommendations.
+Graph queries are frequently used by recommendation engines and are an important
+machine learning tool. The `nodes` function provides fast, distributed, breadth
+first graph traversal over documents in a Solr Cloud collection. The node-sets collected
+by the `nodes` function can be operated on by statistical and machine learning expressions to
+gain more insight into the graph.
 
 === `search`
 
 Ranked search results are a powerful tool for finding the most relevant
 documents from a large document corpus. The `search` expression
 returns the top N ranked search results that match any
-Solr query including geo-spatial queries. The smaller set of relevant
+Solr query, including geo-spatial queries. The smaller set of relevant
 documents can then be explored with statistical, machine learning and
-text mining math expressions to gather insights about the data set.
+text mining expressions to gather insights about the data set.
 
 == Assigning Streams to Variables
 
-The output of any streaming expresssion can be set to a variable.
-Below is very simple example using the `random` function to fetch
+The output of any streaming expression can be set to a variable.
+Below is a very simple example using the `random` function to fetch
 three random samples from collection1. The random samples are returned
-as *tuples*, which are name/value pairs.
+as *tuples*, which contain name/value pairs.
 
-
-Here is a very simple example:
 
 [source,text]
 ----
@@ -126,7 +124,7 @@ When this expression is sent to the /stream handler it responds with:
 
 == Creating a Vector with the *col* Function
 
-The `col` function iterates throw a list of tuples and copies the values
+The `col` function iterates over a list of tuples and copies the values
 from a specific column into an *array*.
 
 The output of the `col` function is an numeric array that can be set to a
