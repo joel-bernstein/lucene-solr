@@ -29,24 +29,24 @@ powerful streams with mathematical functions to make every
 record in your Solr Cloud cluster computable.
 
 
-== <<scalar-math.adoc, Scalar Math>>
+== link:scalar-math.adoc[Scalar Math]
 
-== <<vector-math.adoc, Vector Math>>
+== link:vector-math.adoc[Vector Math]
 
-== <<variables.adoc, Variables>>
+== link:variables.adoc[Variables]
 
-== <<matrix-math.adoc, Matrix Math>>
+== link:matrix-math.adoc[Matrix Math]
 
-== <<vectorization.adoc, Streams and Vectorization>>
+== link:vectorization.adoc[Streams and Vectorization]
 
-== <<statistics.adoc, Statistics>>
+== link:statistics.adoc[Statistics]
 
-== <<probability.adoc, Probability and Simulations>>
+== link:probability.adoc[Probability and Simulations]
 
-== <<time-series.adoc, Time Series>>
+== link:time-series.adoc[Time Series]
 
-== <<numerical-analysis.adoc, Interpolation, Derivatives and Integrals>>
+== link:numerical-analysis.adoc[Interpolation, Derivatives and Integrals]
 
-== <<regression.adoc, Regression and Curve Fitting>>
+== link:regression.adoc[Regression and Curve Fitting]
 
-== <<machine-learning.adoc, Machine Learning & Text Mining>>
+== link:machine-learning.adoc[Machine Learning & Text Mining]

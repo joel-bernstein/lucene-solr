@@ -17,16 +17,75 @@
 // under the License.
 
 
-The math expressions library includes multiple implementations of linear and non-linear
-regression and curve fitting.
+This section of the math expressions user guide covers linear and non-linear regression
+and curve fitting.
+
+== Linear Regression
+
+=== Simple Linear Regression
+
+The `regress` function is used to build a linear regression model between two numeric arrays.
+
+The example below performs a simple linear regression on a random sample of data.
+Each random sample contains two field: response_d and filesize_d. These to
+fields are vectorized a stored in variables *b* and *c*.
+
+[source,text]
+----
+let(a=random(collection2, q="*:*", rows="5000", fl="filesize_d, response_d"),
+    b=col(a, filesize_d),
+    c=col(a, response_d),
+    d=regress(b, c))
+----
+
+When this expression is sent to the /stream handler it responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "d": {
+          "significance": 0,
+          "totalSumSquares": 44853.20540050051,
+          "R": 0.7991197889322804,
+          "RSquared": 0.6385924370631724,
+          "meanSquareError": 3.2433548726890447,
+          "intercept": -2.3039687269394316,
+          "slopeConfidenceInterval": 0.004362798339133255,
+          "regressionSumSquares": 28642.917746800664,
+          "slope": 0.20913333155786767,
+          "interceptStdErr": 0.035400088998122706,
+          "N": 5000
+        }
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 119
+      }
+    ]
+  }
+}
+----
+
+==== Prediction
+
+==== Residuals
 
 
+=== Multivariate Linear Regression
 
-== Simple Linear Regression
+==== Prediction
+
+==== Residuals
+
+
+== Non-linear Regression and Curve Fitting
 
 == Loess Regression
 
 == Polynomial Curve Fitting
 
-== Multivariate Linear Regression
+
 
