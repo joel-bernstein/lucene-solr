@@ -39,6 +39,8 @@ record in your Solr Cloud cluster computable.
 
 == link:vectorization.adoc[Streams and Vectorization]
 
+== link:term-vectors.adoc[Text Analysis and Term Vectors]
+
 == link:statistics.adoc[Statistics]
 
 == link:probability.adoc[Probability and Simulations]
