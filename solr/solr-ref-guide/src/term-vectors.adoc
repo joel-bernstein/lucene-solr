@@ -16,8 +16,11 @@
 // specific language governing permissions and limitations
 // under the License.
 
+The section of user guide describes
 
 == Text Analysis
+
+The `analyze` allows for
 
 
 == Term Vectors

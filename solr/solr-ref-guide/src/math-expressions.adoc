@@ -47,8 +47,8 @@ record in your Solr Cloud cluster computable.
 
 == link:time-series.adoc[Time Series]
 
-== link:numerical-analysis.adoc[Interpolation, Derivatives and Integrals]
-
 == link:regression.adoc[Linear Regression]
 
-== link:machine-learning.adoc[Machine Learning & Text Mining]
+== link:numerical-analysis.adoc[Interpolation, Derivatives and Integrals]
+
+== link:machine-learning.adoc[Machine Learning]
