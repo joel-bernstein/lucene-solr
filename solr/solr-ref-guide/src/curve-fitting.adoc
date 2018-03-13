@@ -18,3 +18,38 @@
 
 
 == Polynomial Curve Fitting
+
+
+The `polyfit` function is used to model the *non-linear* relationship between two random variables.
+
+The `polyfit` function is passed *x* and *y* axises and returns a smooth curve that best fits the y values.
+If only a single array is passed it is treated as the *y* axis and a sequence is generated for the *x* axis.
+
+
+[source,text]
+----
+let(a=timeseries(),
+    b=)
+
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+
+----
+
+== Residuals
+
+== Prediction
+
+== Derivatives and Integrals
+
+
+
+
+
+
+
