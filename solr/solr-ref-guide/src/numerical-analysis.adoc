@@ -1,4 +1,4 @@
-= Interpolation,  Derivatives and Integrals
+= Interpolation, Derivatives and Integrals
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -16,17 +16,151 @@
 // specific language governing permissions and limitations
 // under the License.
 
+This section of the math expression user guide covers interpolation, derivatives and integrals.
+These three related topics are part of the wider field of numerical analysis.
+
 == Interpolation
+
+Interpolation is used to construct new data points between a set of control of points.
+This ability to predict new data points allows for sampling along the curve defined by the
+control points.
+
+The interpolation functions return a numeric array with the predicted values at the control
+points. Except for the `loess` function, which is a smoothing interpolator, the
+interpolation functions return a numeric array which contains the original control points.
+This is because interpolation functions predict curves that pass through the original
+control points.
+
+There is more to the interpolation result though then just a numeric array. The interpolation
+result is actually a function which can be used to sample in between the control points.
+The interpolation result can be passed to other functions which rely on the sampling capability.
+
+There are different algorithms for interpolation that will result in different predictions
+along the curve. The sections below describe the different interpolation functions
+available.
 
 === Linear Interpolation
 
+The `lerp` function performs linear interpolation.
+Linear interpolation draws a straight between control points.
+
+[source,text]
+----
+
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+
+----
+
+
+
 === Spline
+
+[source,text]
+----
+
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+
+----
+
+
 
 === Akima Spline
 
-=== Bicubic Spline
+[source,text]
+----
+
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+
+----
+
+=== Loess
+
+[source,text]
+----
+
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+
+----
+
+
+
+== Bicubic Spline
+
+[source,text]
+----
+
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+
+----
 
 == Derivatives
 
+The derivative of a function measures the rate of change of the *y* value in respects to the
+rate of change of the *x* value.
+
+The `derivative` function returns the derivative value at the control points of an interpolation
+function. Different interpolation functions will result in a different derivatives.
+
+A derivative can also be computed for a derivative.
+
+The example below computes a derivative using an `akima` spline interpolation.
+
+[source,text]
+----
+
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+
+----
+
+
 == Integrals
+
+[source,text]
+----
+
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+
+----
 
