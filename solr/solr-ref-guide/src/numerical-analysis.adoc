@@ -21,8 +21,8 @@ These three related topics are part of the wider field of numerical analysis.
 
 == Interpolation
 
-Interpolation is used to construct new data points between a set of control of points.
-This ability to predict new data points allows for sampling along the curve defined by the
+Interpolation is used to construct new data points between a set of known control of points.
+The ability to predict new data points allows for sampling along the curve defined by the
 control points.
 
 The interpolation functions return a numeric array with the predicted values at the control
@@ -31,15 +31,25 @@ interpolation functions return a numeric array which contains the original contr
 This is because interpolation functions predict curves that pass through the original
 control points.
 
-There is more to the interpolation result though then just a numeric array. The interpolation
-result is actually a function which can be used to sample in between the control points.
-The interpolation result can be passed to other functions which rely on the sampling capability.
+There is more to the interpolation result though then just the numeric array. The interpolation
+result is actually a function which can be used to predict or sample values
+between the control points. The interpolation result can be passed to other functions
+which rely on this sampling capability.
 
 There are different algorithms for interpolation that will result in different predictions
-along the curve. The sections below describe the different interpolation functions
-available.
+along the curve. The math expression library currently supports four interpolation
+functions:
 
-=== Linear Interpolation
+* `lerp`: Linear interpolation predicts points that pass through each control point and
+  form straight lines between control points.
+* `spline`: Spline interpolation predicts points that pass through each control point
+and form a smooth curve between control points.
+* `akima`: Akima spline interpolation is similar to spline interpolation but is more stable to outliers.
+* `loess`: Loess interpolation first performs a non-linear local regression to smooth the original
+control points. Then a `spline` is used to interpolate the smoothed control points.
+
+
+=== Sampling Along the Curve
 
 The `lerp` function performs linear interpolation.
 Linear interpolation draws a straight between control points.
@@ -56,56 +66,6 @@ responds with:
 ----
 
 ----
-
-
-
-=== Spline
-
-[source,text]
-----
-
-----
-
-When this expression is sent to the /stream handler it
-responds with:
-
-[source,json]
-----
-
-----
-
-
-
-=== Akima Spline
-
-[source,text]
-----
-
-----
-
-When this expression is sent to the /stream handler it
-responds with:
-
-[source,json]
-----
-
-----
-
-=== Loess
-
-[source,text]
-----
-
-----
-
-When this expression is sent to the /stream handler it
-responds with:
-
-[source,json]
-----
-
-----
-
 
 
 == Bicubic Spline
