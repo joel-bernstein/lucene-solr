@@ -16,7 +16,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-This section of the math expression user guide covers interpolation, derivatives and integrals.
+This section of the math expression user guide covers *interpolation*, *derivatives* and *integrals*.
 These three related topics are part of the wider field of numerical analysis.
 
 == Interpolation
@@ -25,31 +25,30 @@ Interpolation is used to construct new data points between a set of known contro
 The ability to predict new data points allows for sampling along the curve defined by the
 control points.
 
-The interpolation functions return a numeric array with the predicted values at the control
-points. Except for the `loess` function, which is a smoothing interpolator, the
-interpolation functions return a numeric array which contains the original control points.
-This is because interpolation functions predict curves that pass through the original
-control points.
+The interpolation functions described below return a numeric
+array with the predicted values at the control points. Except for the `loess` function,
+which is a smoothing interpolator, the interpolation functions return a
+numeric array that actually contains the original control points. This is because
+interpolation functions predict curves that pass through the control points. At first glance
+this seems superflous, but there is more then meets the eye with the interpolation result array.
 
-There is more to the interpolation result though then just the numeric array. The interpolation
-result is actually a function which can be used to predict or sample values
+The interpolation result is also a *function* which can be used to sample values
 between the control points. The interpolation result can be passed to other functions
-which rely on this sampling capability.
+which make use of the sampling capability.
 
 There are different algorithms for interpolation that will result in different predictions
-along the curve. The math expression library currently supports four interpolation
-functions:
+along the curve. The math expressions library currently supports the following
+interpolation functions:
 
 * `lerp`: Linear interpolation predicts points that pass through each control point and
   form straight lines between control points.
 * `spline`: Spline interpolation predicts points that pass through each control point
 and form a smooth curve between control points.
-* `akima`: Akima spline interpolation is similar to spline interpolation but is more stable to outliers.
+* `akima`: Akima spline interpolation is similar to spline interpolation but is stable to outliers.
 * `loess`: Loess interpolation first performs a non-linear local regression to smooth the original
-control points. Then a `spline` is used to interpolate the smoothed control points.
+control points. Then a spline is used to interpolate the smoothed control points.
 
-
-=== Sampling Along the Curve
+=== Prediction
 
 The `lerp` function performs linear interpolation.
 Linear interpolation draws a straight between control points.
@@ -68,20 +67,7 @@ responds with:
 ----
 
 
-== Bicubic Spline
 
-[source,text]
-----
-
-----
-
-When this expression is sent to the /stream handler it
-responds with:
-
-[source,json]
-----
-
-----
 
 == Derivatives
 
@@ -110,6 +96,21 @@ responds with:
 
 
 == Integrals
+
+[source,text]
+----
+
+----
+
+When this expression is sent to the /stream handler it
+responds with:
+
+[source,json]
+----
+
+----
+
+== Bicubic Spline
 
 [source,text]
 ----

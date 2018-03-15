@@ -16,13 +16,247 @@
 // specific language governing permissions and limitations
 // under the License.
 
+
+This section of the math expressions user guide covers the machine learning
+functions.
+
 == Feature Scaling
+
+Before performing machine learning operations its often important to
+scale the feature vectors so they can be compared at the same scale.
+
+=== Min/Max Scaling
+
+The `minMaxScale` function scales a vector or matrix between a min and
+max value. By default it will scale between 0 and 1 if min/max values
+are not provided.
+
+Below is a simple example of min/max scaling between 0 and 1.
+Notice that once brought into the same scale the vectors are the same.
+
+[source,text]
+----
+let(a=array(20, 30, 40, 50),
+    b=array(200, 300, 400, 500),
+    c=matrix(a, b),
+    d=minMaxScale(c))
+----
+
+This expression returns the following response:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "d": [
+          [
+            0,
+            0.3333333333333333,
+            0.6666666666666666,
+            1
+          ],
+          [
+            0,
+            0.3333333333333333,
+            0.6666666666666666,
+            1
+          ]
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
+
+=== Standardization
+
+Standardizing scales a vector so that it has a mean of 0 and a
+standard deviation of 1. Standardization can be used with machine
+learning algorithms, such as SVM, that
+perform better when the data has a normal distribution.
+
+[source,text]
+----
+let(a=array(20, 30, 40, 50),
+    b=array(200, 300, 400, 500),
+    c=matrix(a, b),
+    d=standardize(c))
+----
+
+This expression returns the following response:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "d": [
+          [
+            -1.161895003862225,
+            -0.3872983346207417,
+            0.3872983346207417,
+            1.161895003862225
+          ],
+          [
+            -1.1618950038622249,
+            -0.38729833462074165,
+            0.38729833462074165,
+            1.1618950038622249
+          ]
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 17
+      }
+    ]
+  }
+}
+----
+
+=== Unitize
+
+Unitizing scales vectors to a magnitude of 1. A vector with a
+magnitude of 1 is known as a unit vector.  Unit vectors are
+preferred when the vector math deals
+with vector direction rather than magnitude.
+
+[source,text]
+----
+let(a=array(20, 30, 40, 50),
+    b=array(200, 300, 400, 500),
+    c=matrix(a, b),
+    d=unitize(c))
+----
+
+This expression returns the following response:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "d": [
+          [
+            0.2721655269759087,
+            0.40824829046386296,
+            0.5443310539518174,
+            0.6804138174397716
+          ],
+          [
+            0.2721655269759087,
+            0.4082482904638631,
+            0.5443310539518174,
+            0.6804138174397717
+          ]
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 6
+      }
+    ]
+  }
+}
+----
 
 == Distance
 
-== Text Analysis
+The `distance` function computes a distance measure for two
+numeric arrays, or a distance matrix for the columns of a matrix.
 
-== Term Vectors
+There currently four supported distance measures:
+
+* euclidean (default)
+* manhattan
+* canberra
+* earthMovers
+
+Below is an example for computing euclidean distance for
+two numeric arrays:
+
+
+[source,text]
+----
+let(a=array(20, 30, 40, 50),
+    b=array(21, 29, 41, 49),
+    c=distance(a, b))
+----
+
+This expression returns the following response:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "c": 2
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
+
+Below is an example for computing a distance matrix for columns
+of a matrix:
+
+
+[source,text]
+----
+let(a=array(20, 30, 40),
+    b=array(21, 29, 41),
+    c=array(31, 40, 50),
+    d=matrix(a,b,c),
+    c=distance(d))
+----
+
+This expression returns the following response:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "e": [
+          [
+            0,
+            15.652475842498529,
+            34.07345007480164
+          ],
+          [
+            15.652475842498529,
+            0,
+            18.547236990991408
+          ],
+          [
+            34.07345007480164,
+            18.547236990991408,
+            0
+          ]
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 24
+      }
+    ]
+  }
+}
+----
 
 == Knn
 
