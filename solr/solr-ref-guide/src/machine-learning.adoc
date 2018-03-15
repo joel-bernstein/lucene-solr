@@ -213,7 +213,6 @@ This expression returns the following response:
 Below is an example for computing a distance matrix for columns
 of a matrix:
 
-
 [source,text]
 ----
 let(a=array(20, 30, 40),
@@ -258,11 +257,63 @@ This expression returns the following response:
 }
 ----
 
-== Knn
+== K-means Clustering
 
-== Kmeans Clustering
+The `kmeans` functions performs k-means clustering of the rows of a matrix.
+Once the clustering has been completed there are a number of useful functions available
+for examining the *clusters* and *centroids*.
 
-== Fuzzy Kmeans clustering
+This examples below deal with clustering of *term vectors*.
+The chapter on link:term-vectors.adoc[Text Analysis and Term Vectors] should be
+consulted for a full explanation of these features.
 
-== Multi-kmeans clustering
+=== Examining Clusters
 
+[source,text]
+----
+
+----
+
+This expression returns the following response:
+
+[source,json]
+----
+
+----
+
+=== Examining Centroids
+
+[source,text]
+----
+
+----
+
+This expression returns the following response:
+
+[source,json]
+----
+
+----
+
+
+== Fuzzy K-means clustering
+
+== Multi-K-means clustering
+
+
+== K-Nearest Neighbor
+
+The `knn` function returns the K nearest neighbors to a vector in
+a matrix.
+
+[source,text]
+----
+
+----
+
+This expression returns the following response:
+
+[source,json]
+----
+
+----
