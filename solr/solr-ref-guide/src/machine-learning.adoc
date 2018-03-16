@@ -218,7 +218,7 @@ of a matrix:
 let(a=array(20, 30, 40),
     b=array(21, 29, 41),
     c=array(31, 40, 50),
-    d=matrix(a,b,c),
+    d=matrix(a, b, c),
     c=distance(d))
 ----
 
@@ -263,14 +263,14 @@ The `kmeans` functions performs k-means clustering of the rows of a matrix.
 Once the clustering has been completed there are a number of useful functions available
 for examining the *clusters* and *centroids*.
 
-This examples below deal with clustering of *term vectors*.
+The examples below are clustering *term vectors*.
 The chapter on link:term-vectors.adoc[Text Analysis and Term Vectors] should be
 consulted for a full explanation of these features.
 
-=== Examining the Centroids
+=== Centroid Features
 
-In the example below the `kmeans` function is used to cluster a result set from the Enron email data set
-and then the top features extracted from the cluster centroids.
+In the example below the `kmeans` function is used to cluster a result set from the Enron email data-set
+and then the top features are extracted from the cluster centroids.
 
 Let's look at what data is assigned to each variable:
 
@@ -280,11 +280,12 @@ and annotates each tuple with the analyzed bigram terms from the body field.
 
 * `b`: The `termVectors` function creates a tf-idf term vector matrix from the
 tuples stored in variable *a*. There is a row for each tuple in the matrix. The columns of the matrix
-are the bigram terms that were annotated onto each tuple.
-* `c`: The `kmeans` function clusters the rows of the matrix into 5 clusters.
-* `d`: The `getCentroids` function returns the centroids in a matrix. Each row in the matrix is a centroid
+are the bigram terms that were attached to each tuple.
+* `c`: The `kmeans` function clusters the rows of the matrix into 5 clusters. The k-means clustering is performed using the
+*Euclidean distance* measure.
+* `d`: The `getCentroids` function returns a matrix of cluster centroids. Each row in the matrix is a centroid
 from one of the 5 clusters.
-* `e`: The `topFeatures` function returns the column labels for the top 5 features in each centroid in the matrix.
+* `e`: The `topFeatures` function returns the column labels for the top 5 features of each centroid in the matrix.
 
 [source,text]
 ----
@@ -352,17 +353,26 @@ This expression returns the following response:
 }
 ----
 
-=== Examining a Cluster
+=== Cluster Features
+
+The example below examines the top features of a specific cluster. This example uses the same techniques
+as the centroids example but the top features are extracted from a cluster rather then the centroids.
+
+The `getCluster` function returns a cluster by its index. Each cluster is a matrix containing term vectors
+that have been clustered together based on their features.
+
+In the example below the `topFeatures` function is used to extract the top 4 features from each term vector
+in the cluster.
 
 [source,text]
 ----
-let(a=select(random(collection3, q="body:oil*", rows="500", fl="id, body"),
+let(a=select(random(collection3, q="body:oil", rows="500", fl="id, body"),
                     id,
-                    analyze(body, body) as terms),
-     b=termVectors(a, maxDocFreq=.09, minDocFreq=.03, minTermLength=14, exclude="_,copyright,contained,newswire,press,cc,please,20,reuters,journal,1,from,',."),
-     c=kmeans(b, 25),
-     d=getCluster(c, 0),
-     e=topFeatures(d, 4))
+                    analyze(body, body_bigram) as terms),
+    b=termVectors(a, maxDocFreq=.09, minDocFreq=.03, minTermLength=14, exclude="_,copyright"),
+    c=kmeans(b, 25),
+    d=getCluster(c, 0),
+    e=topFeatures(d, 4))
 ----
 
 This expression returns the following response:
@@ -441,19 +451,86 @@ This expression returns the following response:
 }
 ----
 
-== Multi-K-means Clustering
+== Multi K-means Clustering
+
+The outcome of K-means clustering will be different based
+on the initial placement of the centroids. K-means is fast enough
+to allow multiple trials to be performed in a reasonable
+period of time. The `multiKmeans` function runs the K-means
+clustering algorithm for a gven number of trials and selects the
+best result based on which trial produces the lowest intra-cluster
+variance.
+
+The example below is identical to centroids example except that
+it uses `multiKmeans` with 100 trials, rather then a single
+trial of the `kmeans` function.
 
 [source,text]
 ----
-
+let(a=select(random(collection3, q="body:oil", rows="500", fl="id, body"),
+                    id,
+                    analyze(body, body_bigram) as terms),
+    b=termVectors(a, maxDocFreq=.09, minDocFreq=.03, minTermLength=14, exclude="_,copyright"),
+    c=multiKmeans(b, 5,100),
+    d=getCentroids(c),
+    e=topFeatures(d, 5))
 ----
 
 This expression returns the following response:
 
 [source,json]
 ----
-
+{
+  "result-set": {
+    "docs": [
+      {
+        "e": [
+          [
+            "enron enronxgate",
+            "energy trading",
+            "energy markets",
+            "energy services",
+            "unleaded gasoline"
+          ],
+          [
+            "maharashtra state",
+            "electricity board",
+            "state electricity",
+            "energy trading",
+            "chief financial"
+          ],
+          [
+            "price controls",
+            "electricity prices",
+            "francisco chronicle",
+            "wholesale electricity",
+            "power generators"
+          ],
+          [
+            "southern california",
+            "california edison",
+            "public utilities",
+            "francisco chronicle",
+            "utilities commission"
+          ],
+          [
+            "california edison",
+            "power purchases",
+            "system operator",
+            "term contracts",
+            "independent system"
+          ]
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 1182
+      }
+    ]
+  }
+}
 ----
+
 
 
 == Fuzzy K-means Clustering
@@ -470,19 +547,73 @@ This expression returns the following response:
 
 ----
 
-== K-Nearest Neighbor
+== K-nearest Neighbor
 
-The `knn` function returns the K nearest neighbors to a vector in
-a matrix.
+The `knn` function searches the rows of a matrix for the
+K-nearest neighbors of a search vector. The `knn` function
+returns a matrix of the K-nearest neighbors.
+
+The example below builds on the clustering examples to demonstrate
+the `knn` function.
+
+In the example, the centroid matrix is set to variable *d*. The first
+centroid is selected from the matrix with the `rowAt` function.
+Next the first cluster matrix is selected and set to variable *f*.
+Then the `knn` function is used to find the 3 nearest neighbors
+to the centroid vector in the cluster matrix.
+
+The `knn` function returns a matrix with the 3 nearest neighbors.
+Finally the top features of the nearest neighbor matrix
+are returned.
+
 
 [source,text]
 ----
-
+let(a=select(random(collection3, q="body:oil", rows="500", fl="id, body"),
+                   id,
+                   analyze(body, body_bigram) as terms),
+    b=termVectors(a, maxDocFreq=.09, minDocFreq=.03, minTermLength=14, exclude="_,copyright"),
+    c=multiKmeans(b, 5,100),
+    d=getCentroids(c),
+    e=rowAt(d, 0),
+    f=getCluster(c, 0),
+    g=knn(f, e, 3),
+    h=topFeatures(g))
 ----
 
 This expression returns the following response:
 
 [source,json]
 ----
-
-----
+{
+  "result-set": {
+    "docs": [
+      {
+        "h": [
+          [
+            "california power",
+            "electricity supply",
+            "concerned about",
+            "companies like"
+          ],
+          [
+            "maharashtra state",
+            "california power",
+            "electricity board",
+            "alternative energy"
+          ],
+          [
+            "electricity board",
+            "maharashtra state",
+            "state electricity",
+            "houston chronicle"
+          ]
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 1243
+      }
+    ]
+  }
+}----
