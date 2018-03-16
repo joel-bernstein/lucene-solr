@@ -17,7 +17,7 @@
 // under the License.
 
 
-This section of the math expressions user guide covers the machine learning
+This section of the math expressions user guide covers machine learning
 functions.
 
 == Feature Scaling
@@ -76,9 +76,9 @@ This expression returns the following response:
 
 === Standardization
 
-Standardizing scales a vector so that it has a mean of 0 and a
-standard deviation of 1. Standardization can be used with machine
-learning algorithms, such as SVM, that
+The `standardize` function scales a vector so that it has a
+mean of 0 and a standard deviation of 1. Standardization can be
+used with machine learning algorithms, such as SVM, that
 perform better when the data has a normal distribution.
 
 [source,text]
@@ -123,7 +123,7 @@ This expression returns the following response:
 
 === Unitize
 
-Unitizing scales vectors to a magnitude of 1. A vector with a
+The `unitize` function scales vectors to a magnitude of 1. A vector with a
 magnitude of 1 is known as a unit vector.  Unit vectors are
 preferred when the vector math deals
 with vector direction rather than magnitude.
@@ -267,7 +267,181 @@ This examples below deal with clustering of *term vectors*.
 The chapter on link:term-vectors.adoc[Text Analysis and Term Vectors] should be
 consulted for a full explanation of these features.
 
-=== Examining Clusters
+=== Examining the Centroids
+
+In the example below the `kmeans` function is used to cluster a result set from the Enron email data set
+and then the top features extracted from the cluster centroids.
+
+Let's look at what data is assigned to each variable:
+
+* `a`: The `random` function returns a sample of 500 documents from the *enron*
+collection that match the query *body:oil*. The `select` function selects the *id* and
+and annotates each tuple with the analyzed bigram terms from the body field.
+
+* `b`: The `termVectors` function creates a tf-idf term vector matrix from the
+tuples stored in variable *a*. There is a row for each tuple in the matrix. The columns of the matrix
+are the bigram terms that were annotated onto each tuple.
+* `c`: The `kmeans` function clusters the rows of the matrix into 5 clusters.
+* `d`: The `getCentroids` function returns the centroids in a matrix. Each row in the matrix is a centroid
+from one of the 5 clusters.
+* `e`: The `topFeatures` function returns the column labels for the top 5 features in each centroid in the matrix.
+
+[source,text]
+----
+let(a=select(random(enron, q="body:oil", rows="500", fl="id, body"),
+                    id,
+                    analyze(body, body_bigram) as terms),
+    b=termVectors(a, maxDocFreq=.10, minDocFreq=.05, minTermLength=14, exclude="_,copyright"),
+    c=kmeans(b, 5),
+    d=getCentroids(c),
+    e=topFeatures(d, 5))
+----
+
+This expression returns the following response:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "e": [
+          [
+            "enron enronxgate",
+            "north american",
+            "energy services",
+            "conference call",
+            "power generation"
+          ],
+          [
+            "financial times",
+            "chief financial",
+            "financial officer",
+            "exchange commission",
+            "houston chronicle"
+          ],
+          [
+            "southern california",
+            "california edison",
+            "public utilities",
+            "utilities commission",
+            "rate increases"
+          ],
+          [
+            "rolling blackouts",
+            "public utilities",
+            "electricity prices",
+            "federal energy",
+            "price controls"
+          ],
+          [
+            "california edison",
+            "regulatory commission",
+            "southern california",
+            "federal energy",
+            "power generators"
+          ]
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 982
+      }
+    ]
+  }
+}
+----
+
+=== Examining a Cluster
+
+[source,text]
+----
+let(a=select(random(collection3, q="body:oil*", rows="500", fl="id, body"),
+                    id,
+                    analyze(body, body) as terms),
+     b=termVectors(a, maxDocFreq=.09, minDocFreq=.03, minTermLength=14, exclude="_,copyright,contained,newswire,press,cc,please,20,reuters,journal,1,from,',."),
+     c=kmeans(b, 25),
+     d=getCluster(c, 0),
+     e=topFeatures(d, 4))
+----
+
+This expression returns the following response:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "e": [
+          [
+            "electricity board",
+            "maharashtra state",
+            "power purchase",
+            "state electricity",
+            "reserved enron"
+          ],
+          [
+            "electricity board",
+            "maharashtra state",
+            "state electricity",
+            "purchase agreement",
+            "independent power"
+          ],
+          [
+            "maharashtra state",
+            "reserved enron",
+            "federal government",
+            "state government",
+            "dabhol project"
+          ],
+          [
+            "purchase agreement",
+            "power purchase",
+            "electricity board",
+            "maharashtra state",
+            "state government"
+          ],
+          [
+            "investment grade",
+            "portland general",
+            "general electric",
+            "holding company",
+            "transmission lines"
+          ],
+          [
+            "state government",
+            "state electricity",
+            "purchase agreement",
+            "electricity board",
+            "maharashtra state"
+          ],
+          [
+            "electricity board",
+            "state electricity",
+            "energy management",
+            "maharashtra state",
+            "energy markets"
+          ],
+          [
+            "electricity board",
+            "maharashtra state",
+            "state electricity",
+            "state government",
+            "second quarter"
+          ]
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 978
+      }
+    ]
+  }
+}
+----
+
+== Multi-K-means Clustering
 
 [source,text]
 ----
@@ -281,7 +455,8 @@ This expression returns the following response:
 
 ----
 
-=== Examining Centroids
+
+== Fuzzy K-means Clustering
 
 [source,text]
 ----
@@ -294,12 +469,6 @@ This expression returns the following response:
 ----
 
 ----
-
-
-== Fuzzy K-means clustering
-
-== Multi-K-means clustering
-
 
 == K-Nearest Neighbor
 
