@@ -16,11 +16,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-The math expressions library contains a powerful set of vector math
-functions that can be applied in very flexible ways. This section of the guide
-describes the different approaches to vector and demonstrate some of
-the functions. Other sections of the guide will also cover
-vector math as vector math is used in many areas mathematics.
+This section of the user guide deals with vector math and
+vector manipulation functions.
 
 == Arrays
 
@@ -58,9 +55,10 @@ a json array.
 }
 ----
 
-== Passing Arrays
+== Array Manipulation
 
-Arrays can be passed as a parameter to functions that operate on arrays.
+Arrays can be passed as parameters to functions that operate on arrays. There are set of functions
+that are designed to manipulate arrays.
 
 For example, an array can be reversed with the `rev` function:
 
@@ -119,16 +117,12 @@ When this expression is sent to the /stream handler it responds with:
 }
 ----
 
-== Returning Arrays
-
-Functions can create and return arrays. For example the
-`sequence` function generates a sequence of numbers and
-returns the sequence as an array. The expression below creates
-a sequence of length 3, starting at 0, with a stride of 10.
+A slice of an array can be taken with the `copyOfRange` function, which
+copies an array from a start and end range.
 
 [source,text]
 ----
-sequence(3, 0, 10)
+copyOfRange(array(1,2,3,4,5,6), 1, 4)
 ----
 
 When this expression is sent to the /stream handler it responds with:
@@ -140,14 +134,14 @@ When this expression is sent to the /stream handler it responds with:
     "docs": [
       {
         "return-value": [
-          0,
-          10,
-          20
+          2,
+          3,
+          4
         ]
       },
       {
         "EOF": true,
-        "RESPONSE_TIME": 5
+        "RESPONSE_TIME": 0
       }
     ]
   }
@@ -162,7 +156,7 @@ operate over an array and return a single
 value. The following vector summarizations and norm functions are available:
 `mult`, `add`, `sumSq`, `mean`, `l1norm`, `l2norm`, `linfnorm`.
 
-The example below is using the `mult`,
+The example below is using the `mult` function,
 which multiples all the values of an array.
 
 [source,text]
@@ -191,8 +185,7 @@ When this expression is sent to the /stream handler it responds with:
 
 The vector norm functions provide different formulas for calculating vector magnitude.
 
-The example below performs the l2norm
-calculation on an array.
+The example below performs the l2norm calculation of an array.
 
 [source,text]
 ----
@@ -220,12 +213,12 @@ When this expression is sent to the /stream handler it responds with:
 
 == Scalar Vector Math
 
-Scalar vector math function add, subtract, multiple or divide a scalar value with every value in a vector.
-The names of the scalar vector math functions are: `scalarAdd`, `scalarSubtract`, `scalarMultiply`
+Scalar vector math functions add, subtract, multiple or divide a scalar value with every value in a vector.
+The following vector math functions perform these operations: `scalarAdd`, `scalarSubtract`, `scalarMultiply`
 and `scalarDivide`.
 
 
-Below is an example of a `scalarMultiply` function which is multiplying a the scalar value 3 with
+Below is an example the `scalarMultiply` function, which is multiplying the scalar value 3 with
 every value of an array.
 
 [source,text]
@@ -258,8 +251,9 @@ When this expression is sent to the /stream handler it responds with:
 
 == Element-By-Element Vector Math
 
-Two vectors can be added, subtracted, multiplied and divided by using element-by-element vector math functions.
-The element-by-element vector math functions are `ebeAdd`, `ebeSubtract`, `ebeMultiply`, `ebeDivide`.
+Two vectors can be added, subtracted, multiplied and divided using element-by-element
+vector math functions. The following element-by-element vector math functions perform
+these operations: `ebeAdd`, `ebeSubtract`, `ebeMultiply`, `ebeDivide`.
 
 The expression below performs the element-by-element subtraction of two arrays.
 
@@ -291,7 +285,60 @@ When this expression is sent to the /stream handler it responds with:
 }
 ----
 
-== Dotproduct and Cosine Similarity
+== Dot Product and Cosine Similarity
 
+The `dotProduct` and `cosineSimilarity` functions are often used as similarity measures between two
+sparse vectors. The `dotProduct` is a measure of both angle and magnitude while `cosineSimilarity`
+is a measure only of angle.
 
+Below is an example of the `dotProduct` function:
 
+[source,text]
+----
+dotProduct(array(2,3,0,0,0,1), array(2,0,1,0,0,3))
+----
+
+When this expression is sent to the /stream handler it responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "return-value": 7
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 15
+      }
+    ]
+  }
+}
+----
+
+Below is an example of the `cosineSimilarity` function:
+
+[source,text]
+----
+cosineSimilarity(array(2,3,0,0,0,1), array(2,0,1,0,0,3))
+----
+
+When this expression is sent to the /stream handler it responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "return-value": 0.5
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 7
+      }
+    ]
+  }
+}
+----

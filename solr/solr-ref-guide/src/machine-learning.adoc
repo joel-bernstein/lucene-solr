@@ -471,7 +471,7 @@ let(a=select(random(collection3, q="body:oil", rows="500", fl="id, body"),
                     id,
                     analyze(body, body_bigram) as terms),
     b=termVectors(a, maxDocFreq=.09, minDocFreq=.03, minTermLength=14, exclude="_,copyright"),
-    c=multiKmeans(b, 5,100),
+    c=multiKmeans(b, 5, 100),
     d=getCentroids(c),
     e=topFeatures(d, 5))
 ----
@@ -556,29 +556,27 @@ returns a matrix of the K-nearest neighbors.
 The example below builds on the clustering examples to demonstrate
 the `knn` function.
 
-In the example, the centroid matrix is set to variable *d*. The first
+In the example, the centroids matrix is set to variable *d*. The first
 centroid is selected from the matrix with the `rowAt` function.
-Next the first cluster matrix is selected and set to variable *f*.
 Then the `knn` function is used to find the 3 nearest neighbors
-to the centroid vector in the cluster matrix.
+to the centroid vector in the term vectors matrix (variable b).
 
 The `knn` function returns a matrix with the 3 nearest neighbors.
-Finally the top features of the nearest neighbor matrix
+Finally, the top features of the nearest neighbor matrix
 are returned.
 
 
 [source,text]
 ----
 let(a=select(random(collection3, q="body:oil", rows="500", fl="id, body"),
-                   id,
-                   analyze(body, body_bigram) as terms),
+                    id,
+                    analyze(body, body_bigram) as terms),
     b=termVectors(a, maxDocFreq=.09, minDocFreq=.03, minTermLength=14, exclude="_,copyright"),
-    c=multiKmeans(b, 5,100),
+    c=multiKmeans(b, 5, 100),
     d=getCentroids(c),
     e=rowAt(d, 0),
-    f=getCluster(c, 0),
-    g=knn(f, e, 3),
-    h=topFeatures(g))
+    g=knn(b, e, 3),
+    h=topFeatures(g, 4))
 ----
 
 This expression returns the following response:
@@ -616,4 +614,5 @@ This expression returns the following response:
       }
     ]
   }
-}----
+}
+----

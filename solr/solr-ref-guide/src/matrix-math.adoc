@@ -16,14 +16,9 @@
 // specific language governing permissions and limitations
 // under the License.
 
-Matrices are ubiquitous in statistics, probability, linear algebra, machine learning
-and many other areas of math. The math expression library
-has support for creation and manipulation of
-matrices as well as a
-growing library of matrix math functions. This section of the user
-guide covers
+This section of the user guide covers the
 basics of matrix creation, manipulation and matrix math. Other sections
-of the user guide demonstrate how matrices are used with the statistics,
+of the user guide demonstrate how matrices are used by the statistics,
 probability and machine learning functions.
 
 == Matrix Creation
@@ -72,11 +67,10 @@ responds with:
 
 The rows and columns of a matrix can be accessed using the `rowAt`
 and `colAt` functions. All examples going forward will use
-variables to make
-them easier to understand.
+variables to make them easier to follow.
 
 The example below creates a 2 by 2 matrix and returns the column
-at index 1 and an array.
+at index 1 as an array.
 
 [source,text]
 ----
@@ -111,14 +105,14 @@ responds with:
 
 == Row and Column Labels
 
-A matrix can have column rows and labels. The functions
+A matrix can have column and rows and labels. The functions
 `setRowLabels`, `setColumnLabels`, `getRowLabels` and `getColumnLabels`
-can be used to set and get the labels. The actual labels themselves
+can be used to set and get the labels. The actual labels values
 are set using an array of strings.
 
-The example below explicity sets the labels. In other sections of the
-user guide examples are shown where machine learning or other types
-of functions return matrices with labels already set.
+The example below sets the labels. In other sections of the
+user guide examples are shown where functions return matrices
+with the labels already set.
 
 Below is simple example of setting and getting row and column labels
 on a matrix.
@@ -129,8 +123,8 @@ let(echo="f, g",
     a=array(1, 2),
     b=array(4, 5),
     c=matrix(a, b),
-    d=setRowLabels(c, array(row0, row1)),
-    e=setColumnLabels(c, array(col0, col1)),
+    d=setRowLabels(c, array("row0", "row1")),
+    e=setColumnLabels(c, array("col0", "col1")),
     f=getRowLabels(c),
     g=getColumnLabels(c))
 ----
@@ -294,7 +288,8 @@ responds with:
 }
 ----
 
-The `grandSum` function returns the sum of all values in the matrix. Below is an example of the `grandSum` function:
+The `grandSum` function returns the sum of all values in the matrix.
+Below is an example of the `grandSum` function:
 
 [source,text]
 ----
@@ -324,11 +319,10 @@ responds with:
 }
 ----
 
-
 == Scalar Matrix Math
 
 The same scalar math functions that apply to vectors can also be applied to matrices: `scalarAdd`, `scalarSubtract`,
-`scalarMultiply`, `scalarDivide`. Below is an example of `scalarAdd` function which adds a scalar value to every
+`scalarMultiply`, `scalarDivide`. Below is an example of the `scalarAdd` function which adds a scalar value to every
 element in a matrix.
 
 
@@ -369,10 +363,10 @@ responds with:
 }
 ----
 
-
 == Matrix Addition and Subtraction
 
-Two matrices can be added and subtracted using the `ebeAdd` and `ebeSubtract` functions, which perform element-by-element addition
+Two matrices can be added and subtracted using the `ebeAdd` and `ebeSubtract` functions,
+which perform element-by-element addition
 and subtraction of matrices.
 
 Below is a simple example of an element-by-element addition of a matrix by itself:
@@ -416,7 +410,7 @@ responds with:
 
 == Matrix Multiplication
 
-Matrix multiplication can be done using the `matrixMult` function. Below is a simple
+Matrix multiplication can be accomplished using the `matrixMult` function. Below is a simple
 example of matrix multiplication:
 
 [source,text]
