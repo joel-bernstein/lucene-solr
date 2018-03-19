@@ -17,9 +17,12 @@
 // under the License.
 
 This section of the user guide explores techniques
-for retrieving data from Solr and transforming the result
-sets into vectors and matrices that can be operated on by
-math expressions.
+for retrieving streams of data from Solr and vectorizing the
+*numeric* fields in the data.
+
+The next chapter of the user guide covers
+Text Analysis and Term Vectors which describes how to
+vectorize *text* fields.
 
 == streams
 
@@ -37,13 +40,13 @@ query.
 
 === `timeseries`
 
-Time series analysis is one of the primary data science use cases. The `timeseries`
-expression provides fast distributed time series aggregations, which can then be
+Time series analysis is one of the primary data analysis use cases. The `timeseries`
+expression provides fast distributed time series aggregations, which can be
 vectorized and analyzed with math expressions.
 
 === `knnSearch`
 
-The K-nearest neighbor algorithm is a core machine learning algorithm. The `knnSearch`
+The K-nearest neighbor algorithm is one of the core machine learning algorithms. The `knnSearch`
 function is specialized knn function which finds the k-nearest neighbors of a document in
 a distributed index. Once the nearest neighbors are retrieved they can be vectorized
 and operated on by machine learning and text mining algorithms.
@@ -59,7 +62,7 @@ on by math expressions.
 
 Messaging is an important foundational technology for large scale computing. The `topic`
 function provides publish/subscribe messaging capabilities by treating
-Solr Cloud as a distributed meassage queue. Topics are extremely powerful
+Solr Cloud as a distributed message queue. Topics are extremely powerful
 because they allow subscription by query. Topics can be use to support a broad set of
 use cases including bulk text mining operations and AI alerting.
 
@@ -67,7 +70,7 @@ use cases including bulk text mining operations and AI alerting.
 
 Graph queries are frequently used by recommendation engines and are an important
 machine learning tool. The `nodes` function provides fast, distributed, breadth
-first graph traversal over documents in a Solr Cloud collection. The node-sets collected
+first graph traversal over documents in a Solr Cloud collection. The node sets collected
 by the `nodes` function can be operated on by statistical and machine learning expressions to
 gain more insight into the graph.
 
@@ -168,6 +171,8 @@ let(a=random(collection1, q="*:*", rows="15000", fl="price_f"),
     c=mean(b))
 ----
 
+When this expression is sent to the /stream handler it responds with:
+
 [source,json]
 ----
 {
@@ -179,6 +184,60 @@ let(a=random(collection1, q="*:*", rows="15000", fl="price_f"),
       {
         "EOF": true,
         "RESPONSE_TIME": 306
+      }
+    ]
+  }
+}
+----
+
+== Creating Matrices
+
+Matrices can be created by vectorizing multiple numeric fields
+and adding them to a matrix. The matrices can then be operated on by
+any math expression that operates on matrices.
+
+Note that this section deals with the creation matrices from numeric data.
+The next chapter of the user guide covers Text Analysis and Term Vectors
+which describes how to build tf-idf term vector matrices from text fields.
+
+Below is a simple example where four random samples are taken from different
+sub-populations in the data. The *price_f* field of each random sample is
+vectorized and the vectors are added as rows to a matrix. Then the `sumRows`
+function is applied to the matrix to return a vector containing the sum
+of each row.
+
+[source,text]
+----
+let(a=random(collection1, q="market:A", rows="5000", fl="price_f"),
+    b=random(collection1, q="market:B", rows="5000", fl="price_f"),
+    c=random(collection1, q="market:C", rows="5000", fl="price_f"),
+    d=random(collection1, q="market:D", rows="5000", fl="price_f"),
+    e=col(a, price_f),
+    f=col(b, price_f),
+    g=col(c, price_f),
+    h=col(d, price_f),
+    i=matrix(e, f, g, h),
+    j=sumRows(i))
+----
+
+When this expression is sent to the /stream handler it responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "j": [
+          154390.1293375,
+          167434.89453,
+          159293.258493,
+          149773.42769,
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 9
       }
     ]
   }

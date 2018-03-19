@@ -1,4 +1,4 @@
-= Math Expressions
+= Monte Carlo Simulations
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -27,31 +27,3 @@ ending with machine learning. Along the way the guide covers variables
 and data structures and techniques for combining Solr's
 powerful streams with mathematical functions to make every
 record in your Solr Cloud cluster computable.
-
-== link:scalar-math.adoc[Scalar Math]
-
-== link:vector-math.adoc[Vector Math]
-
-== link:variables.adoc[Variables]
-
-== link:matrix-math.adoc[Matrix Math]
-
-== link:vectorization.adoc[Streams and Vectorization]
-
-== link:term-vectors.adoc[Text Analysis and Term Vectors]
-
-== link:statistics.adoc[Statistics]
-
-== link:probability.adoc[Probability]
-
-== link:montecarlo.adoc[Monte Carlo Simulations]
-
-== link:time-series.adoc[Time Series]
-
-== link:regression.adoc[Linear Regression]
-
-== link:curve-fitting.adoc[Curve Fitting]
-
-== link:numerical-analysis.adoc[Interpolation, Derivatives and Integrals]
-
-== link:machine-learning.adoc[Machine Learning]

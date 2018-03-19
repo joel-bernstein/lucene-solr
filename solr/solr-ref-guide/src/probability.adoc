@@ -23,51 +23,34 @@ framework* included in the math expressions library.
 == Probability Distributions
 
 The probability distribution framework includes
-many of the most commonly used *real* and *discrete* probability
+many commonly used *real* and *discrete* probability
 distributions, including support for *empirical* and
 *enumerated* distributions that model real world data.
 
 The probability distribution framework also includes a set
-of functions that operate on probability distributions
+of functions that use the probability distributions
 to support probability calculations and sampling.
 
 === Real Distributions
 
 The probability distribution framework has the following functions
-which support the creation of well known real distributions:
+which support well known real probability distributions:
 
-`normalDistribution`
+* `normalDistribution`: Creates a normal distribution function.
 
-Creates a normal distribution function.
+* `logNormalDistribution`: Creates a log normal distribution function.
 
-`logNormalDistribution`
+* `gammaDistribution`: Creates a gamma distribution function.
 
-Creates a log normal distribution function.
+* `betaDistribution`: Creates a beta distribution function.
 
-`gammaDistribution`
+* `uniformDistribution`: Creates a uniform real distribution function.
 
-Creates a gamma distribution function.
+* `weibullDistribution`: Creates a Weibull distribution function.
 
-`betaDistribution`
+* `triangularDistribution`: Creates a triangular distribution function.
 
-Creates a beta distribution function.
-
-`uniformDistribution`
-
-Creates a uniform real distribution function.
-
-`weibullDistribution`
-
-Creates a Weibull distribution function.
-
-`triangularDistribution`
-
-Creates a triangular distribution function.
-
-`constantDistribution`
-
-Creates constant real distribution function.
-
+* `constantDistribution`: Creates constant real distribution function.
 
 === Empirical Distribution
 
@@ -79,27 +62,17 @@ real distributions.
 === Discrete
 
 The probability distribution framework has the following functions
-which support the creation of well known discrete distributions:
+which support well known discrete probability distributions:
 
-`poissonDistribution`,
+* `poissonDistribution`: Creates a Poisson distribution function.
 
-Creates a Poisson distribution function.
+* `binomialDistribution`: Creates a binomial distribution function.
 
-`binomialDistribution`,
+* `uniformIntegerDistribution`: Creates a uniform integer distribution function.
 
-Creates a binomial distribution function.
+* `geometricDistribution`: Creates a geometric distribution function.
 
-`uniformIntegerDistribution`,
-
-Creates a uniform integer distribution function.
-
-`geometricDistribution`,
-
-Creates a geometric distribution function.
-
-`zipFDistribution`,
-`
-Creates a Zipf distribution function.
+* `zipFDistribution`: Creates a Zipf distribution function.
 
 === Enumerated Distributions
 
@@ -109,7 +82,6 @@ or from and enumerated list of values and probabilities.
 
 Enumerated distribution functions can be used interchangeable
 with any of the theoretical discreet distributions.
-
 
 === Cumulative Probability
 
@@ -162,9 +134,9 @@ The cumulative probability of value .75 is then calculated.
 [source,text]
 ----
 let(a=random(collection1, q="*:*", rows="30000", fl="price_f"),
-     b=col(a, price_f),
-     c=empiricalDistribution(b),
-     d=cumulativeProbability(c, .75))
+    b=col(a, price_f),
+    c=empiricalDistribution(b),
+    d=cumulativeProbability(c, .75))
 ----
 
 When this expression is sent to the /stream handler it responds with:
@@ -175,7 +147,7 @@ When this expression is sent to the /stream handler it responds with:
   "result-set": {
     "docs": [
       {
-        "b": 0.6554217416103242
+        "b": 0.7554217416103242
       },
       {
         "EOF": true,
@@ -189,15 +161,15 @@ When this expression is sent to the /stream handler it responds with:
 === Probability
 
 The `probability` function can be used with any discrete
-distribution function to compute the probability a single
+distribution function to compute the probability of a
 discrete value.
 
-Below is example of calculating the probability
-of a random variable within a poisson distribution.
+Below is an example which calculates the probability
+of a discrete value within a poisson distribution.
 
 In the example a Poisson distribution function is created
-with a mean of 100. Then
-probability of the value 101 is calculated for this
+with a mean of 100. Then the
+probability of encountering a sample of the discrete value 101 is calculated for this
 specific distribution.
 
 [source,text]
@@ -232,14 +204,14 @@ In the example an enumerated distribution was create from a random
 sample taken from the *day_i* field, which was created
 using a random uniform distribution between 0 and 30.
 
-The probability of the value 10 is then calculated.
+The probability of the discrete value 10 is then calculated.
 
 [source,text]
 ----
 let(a=random(collection1, q="*:*", rows="30000", fl="day_i"),
-     b=col(a, day_i),
-     c=enumeratedDistribution(b),
-     d=probability(c, 10))
+    b=col(a, day_i),
+    c=enumeratedDistribution(b),
+    d=probability(c, 10))
 ----
 
 When this expression is sent to the /stream handler it responds with:
@@ -265,8 +237,7 @@ When this expression is sent to the /stream handler it responds with:
 
 All probability distributions support sampling. The `sample`
 function returns 1 or more random samples from a probability
-distribution. Sampling is used in Monte Simulations which
-are described in Simulations section of the user guide.
+distribution.
 
 Below is an example of a single sample being taken from
 a normal distribution.
@@ -337,5 +308,51 @@ When this expression is sent to the /stream handler it responds with:
 
 === Multivariate Normal Distribution
 
+
+The multivariate normal distribution is a generalization of the
+univariate normal distribution to higher dimensions.
+
+The multivariate normal distribution models two or more random
+variables that are normally distributed. The relationship between
+the variables is defined by a covariance matrix.
+
+==== Sampling
+
+The `sample` function can be used to draw samples
+from a multivariate normal distribution in much the same
+way it does from a univariate normal distribution. The difference is that each
+ sample will be an array containing a sample
+drawn from each of underlying normal distributions. If multiple samples are drawn,
+the `sample` function returns a matrix with a sample in each row.
+Over the long term the columns of the sample matrix will conform to the covariance
+matrix used to parametrize the multi variate normal distribution.
+
+The example below demonstrates how to initialize and draw samples from a multivariate
+normal distribution.
+
+
+
+[source,text]
+----
+let(a=random(collection2, q="*:*", rows="5000", fl="filesize_d, response_d"),
+    b=col(a, filesize_d),
+    c=col(a, response_d),
+    d=array(mean(b), mean(c)),
+    e=transpose(matrix(b, c)),
+    f=cov(d),
+    g=multiVariateNormalDistribution(d, f),
+    h=sample(g, 10))
+----
+
+When this expression is sent to the /stream handler it responds with:
+
+[source,json]
+----
+
+----
+
+== Density
+
+== Sampling
 
 

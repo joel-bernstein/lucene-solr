@@ -17,9 +17,9 @@
 // under the License.
 
 The most basic math expressions are scalar expressions. Scalar expressions
-perform a mathematical operations numbers.
+perform mathematical operations on numbers.
 
-For example, the expression below simply adds two numbers together:
+For example the expression below adds two numbers together:
 
 [source,text]
 ----
@@ -46,7 +46,7 @@ responds with:
 }
 ----
 
-Math functions can be nested. For example in the expression
+Math expressions can be nested. For example in the expression
 below the output of the `add` function is the second parameter
 of the `pow` function:
 
@@ -74,51 +74,10 @@ This expression returns the following response:
 }
 ----
 
-Scalar math can also be performed over a stream of Tuples
-by using the `select` expression.
-
-For example, the expression below computes a new field for each tuple
-by multiplying a field in the tuple by 10.
-
-[source,text]
-----
-select(search(collection2, q="*:*", fl="price_f", sort="price_f desc", rows="3"),
-       price_f,
-       mult(price_f, 10) as newPrice)
-----
-
-This expression returns the following response:
-
-[source,json]
-----
-{
-  "result-set": {
-    "docs": [
-      {
-        "price_f": 0.99999994,
-        "newPrice": 9.9999994
-      },
-      {
-        "price_f": 0.99999994,
-        "newPrice": 9.9999994
-      },
-      {
-        "price_f": 0.9999992,
-        "newPrice": 9.999992
-      },
-      {
-        "EOF": true,
-        "RESPONSE_TIME": 3
-      }
-    ]
-  }
-}
-----
-
 == Streaming Scalar Math
 
 Scalar math expressions can also be applied to each tuple in a stream
-through the `select` stream decorator. The `select` function wraps a
+through use of the `select` stream decorator. The `select` function wraps a
 stream of tuples and selects fields to include in each tuple.
 The `select` function can also use math expressions to compute
 new values and add them to the outgoing tuples.
@@ -169,12 +128,10 @@ When this expression is sent to the /stream handler it responds with:
 
 == More Scalar Math Functions
 
-The following scalar math functions are available in the mathematical
-function library:
+The following scalar math functions are available in the math expressions library:
 
 `abs`, `add`, `div`, `mult`, `sub`, `log`,
 `pow`, `mod`, `ceil`, `floor`, `sin`, `asin`,
 `sinh`, `cos`, `acos`, `cosh`, `tan`, `atan`,
 `tanh`, `round`, `precision`, `sqrt`, `cbrt`
 
-See the function reference for the function definitions.

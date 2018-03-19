@@ -17,24 +17,24 @@
 // under the License.
 
 
-This section of the user guide will cover the core statistical functions
+This section of the user guide covers the core statistical functions
 available in math expressions.
 
 == Descriptive Statistics
 
 The `describe` function can be used to return descriptive statistics about a
-numeric array. The `describe` function returns a single *tuple* with name value
+numeric array. The `describe` function returns a single *tuple* with name/value
 pairs containing descriptive statistics.
 
 Below is a simple example that selects a random sample of documents,
-creates a vector from the result set and uses the `describe` function to
+vectorizes the *price_f* field in the result set and uses the `describe` function to
 return descriptive statistics about the vector:
 
 [source,text]
 ----
 let(a=random(collection1, q="*:*", rows="1500", fl="price_f"),
-     b=col(a, price_f),
-     c=describe(b))
+    b=col(a, price_f),
+    c=describe(b))
 ----
 
 When this expression is sent to the /stream handler it responds with:
@@ -74,13 +74,13 @@ When this expression is sent to the /stream handler it responds with:
 Histograms and frequency tables are are tools for understanding the distribution
 of a random variable.
 
-The `hist` function creates a histogram for usage with continuous data. The
+The `hist` function creates a histogram designed for usage with continuous data. The
 `freqTable` function creates a frequency table for use with discrete data.
 
 === histograms
 
 Below is an example that selects a random sample, creates a vector from the
-results set and uses the `hist` function to return a histogram with 5 bins.
+result set and uses the `hist` function to return a histogram with 5 bins.
 The `hist` function returns a list of tuples with summary statistics for each bin.
 
 [source,text]
@@ -165,15 +165,11 @@ When this expression is sent to the /stream handler it responds with:
 }
 ----
 
-The `col` function can be used to select a vector of data from the list of tuples
-returned by the hist function.
+The `col` function can be used to *vectorize* a column of data from the list of tuples
+returned by the `hist` function.
 
 In the example below, the *N* field,
 which is the number of observations in the each bin, is returned as a vector.
-
-In the example below the number of bins is now 11. Based on the number
-of observations in each bin it can be deduced that the *price_f*
-is uniform distribution.
 
 [source,text]
 ----
@@ -218,8 +214,12 @@ When this expression is sent to the /stream handler it responds with:
 
 The `freqTable` function returns a frequency distribution for a discrete data set.
 The `freqTable` function doesn't create bins like the histogram. Instead it counts
-the occurrence of each discrete data value and returns a list of tuples with
-frequency statistics for each value.
+the occurrence of each discrete data value and returns a list of tuples with the
+frequency statistics for each value. Fields from a frequency table can be vectorized using
+using the `col` function in the same manner as a histogram.
+
+Below is a simple example of a frequency table built from a random sample of
+a discrete variable.
 
 [source,text]
 ----
@@ -291,11 +291,9 @@ When this expression is sent to the /stream handler it responds with:
 
 == Percentiles
 
-The `percentile` function returns an estimated value of a specific percentile in
-a numeric array. The example below returns the estimation for the 95 percentile
-for a random sample of the price_f field. The price_f field was generated as a random
-float between 0 and 1.
-
+The `percentile` function returns an estimated value for a specific percentile in
+a numeric array. The example below returns the estimation for the 95th percentile
+of the *price_f* field.
 
 [source,text]
 ----
@@ -312,7 +310,7 @@ When this expression is sent to the /stream handler it responds with:
    "result-set": {
      "docs": [
        {
-         "c": 0.9484775349999998
+         "c": 312.94
        },
        {
          "EOF": true,
@@ -326,20 +324,19 @@ When this expression is sent to the /stream handler it responds with:
 == Covariance and Correlation
 
 Covariance and Correlation measure how random variables move
-together. Math expressions support for calculating covariance
-and correlation of two vectors as well support for
-calculating covariance and correlation matrices.
+together.
 
 === Covariance and Covariance Matrices
 
-The `cov` function function calculates the covariance of two
+The `cov` function calculates the covariance of two
 numeric arrays.
-
-The example below uses
-hard coded arrays but arrays pulled from Solr can also be used.
 
 In the example below covariance is calculated for two numeric
 arrays.
+
+The example below uses arrays created by the `array` function. Its important to note that
+vectorized data from Solr Cloud collections can be used with any function that
+operates on arrays.
 
 [source,text]
 ----
@@ -367,9 +364,8 @@ When this expression is sent to the /stream handler it responds with:
  }
 ----
 
-The `cov` function will automatically compute a covariance
-matrix for the columns of a matrix, if a matrix
-is passed rather then a two numeric arrays.
+If a matrix is passed to the `cov` function it will automatically compute a covariance
+matrix for the columns of the matrix.
 
 Notice in the example three numeric arrays are added as rows
 in a matrix. The matrix is then transposed to turn the rows into
@@ -427,9 +423,9 @@ Correlation is measure of covariance that has been scaled between
 
 There are support for three types of correlation:
 
-* pearsons (default)
-* kendalls
-* spearmans
+* *pearsons* (default)
+* *kendalls*
+* *spearmans*
 
 The type of correlation is specified as a named parameter in the
 function call.
@@ -460,57 +456,43 @@ When this expression is sent to the /stream handler it responds with:
  }
 ----
 
-Like the `cov` function, the `corr` function also automatically creates correlation matrices
-if a matrix is passed as a parameter. Also like the
-`cov` function the `cor` function correlates the
-columns of a matrix.
-
+Like the `cov` function, the `corr` function automatically builds a correlation matrix
+if a matrix passed as a parameter. The correlation matrix is built by correlating the columns
+of the matrix passed in.
 
 == Statistical Inference Tests
 
-The statistical functions include support for statistical inference tests, which
-test a hypothesis on random samples and provides p-values (probability) that the
-test result is true for the entire population.
+Statistical inference tests test a hypothesis on *random samples* and return p-values which
+can be used to infer the reliability of the test for the entire population.
 
-The following statistical inference test are available:
+The following statistical inference tests are available:
 
-`anova`
-
-One-Way-Anova tests if there is a statistically significant difference in the
+* `anova`: One-Way-Anova tests if there is a statistically significant difference in the
 means of two or random samples.
 
-`ttest`
-
-Tests if there if there is a statistically significant different in the means of two
+* `ttest`: The T-test tests if there is a statistically significant difference in the means of two
 random samples.
 
-`pairedTtest`
+* `pairedTtest`: The paired t-test tests if there is a statistically significant difference
+in the means of two random samples with paired data.
 
-Tests if there if there is a statistically significant different in the means of two
-random samples with paired data.
+* `gTestDataSet`: The G-test tests if two samples of binned discrete data were drawn
+from the same population.
 
-`gTestDataSet`
+* `chiSquareDataset`: The Chi-Squared Test tests if two samples of binned discrete data were
+drawn from the same population.
 
-Test if two samples of binned discrete data were drawn from the same population.
-
-`chiSquareDataset`
-
-Test if two samples of binned discrete data were drawn from the same population.
-
-`mannWhitney`
-
-Is a non-parametric test that tests if two samples were pulled from the same population.
-Often used instead of the ttest when the underlying assumptions of the ttest are not
+* `mannWhitney`: The Mann-Whitney test is a non-parametric test that tests if two samples were pulled
+from the same population. The Mann-Whitney test is often used instead of the T-test when the
+underlying assumptions of the T-test are not
 met.
 
-`ks` (Kolmogorov-Smirnov Test)
-
-Tests if two samples of continuous data were drawn from the same population.
+* `ks`: The Kolmogorov-Smirnov test tests if two samples of continuous data were drawn from
+the same population.
 
 Below is a simple example of a t-test performed on two random samples.
 The returned p-value of .93 means we can accept the null hypothesis
 that the two samples do not have statistically significantly differences in the means.
-
 
 [source,text]
 ----
@@ -545,27 +527,18 @@ When this expression is sent to the /stream handler it responds with:
 
 == Transformations
 
-In statistical analysis it's often useful to transform data sets before performing
-statistical calculations. The statistical function library has following commonly used
-transformations:
+In statistical analysis its often useful to transform data sets before performing
+statistical calculations. The statistical function library includes the following
+commonly used transformations:
 
-`rank`
-
-Returns a numeric array with the rank-transformed value of each element of the original
+* `rank`: Returns a numeric array with the rank-transformed value of each element of the original
 array.
 
-`log`
+* `log`: Returns a numeric array with the natural log of each element of the original array.
 
-Returns a numeric array with the natural log of each element of the original array.
+* `sqrt`: Returns a numeric array with the square root of each element of the original array.
 
-`sqrt`
-
-Returns a numeric array with the square root of each element of the original array.
-
-`cbrt`
-
-Returns a numeric array with the cube root of each element of the original array.
-
+* `cbrt`: Returns a numeric array with the cube root of each element of the original array.
 
 Below is an example of a ttest performed on log transformed data sets:
 
