@@ -351,8 +351,3 @@ When this expression is sent to the /stream handler it responds with:
 
 ----
 
-== Density
-
-== Sampling
-
-

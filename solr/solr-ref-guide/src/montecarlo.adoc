@@ -16,14 +16,76 @@
 // specific language governing permissions and limitations
 // under the License.
 
-The Streaming Expression library includes a powerful
-mathematical programing syntax with many of the features of a
-functional programming language. The syntax includes variables,
-data structures and a growing set of mathematical functions.
 
-This user guide provides an overview of the different areas of
-mathematical coverage starting with basic scalar math and
-ending with machine learning. Along the way the guide covers variables
-and data structures and techniques for combining Solr's
-powerful streams with mathematical functions to make every
-record in your Solr Cloud cluster computable.
+Monte Carlo simulations are commonly used to model the behavior of
+stochastic systems. This section of the user guide describes
+how to perform both *uncorrelated* and *correlated* Monte Carlo simulations
+using the *sampling* capabilities of the probability distribution framework.
+
+=== Uncorrelated
+
+Uncorrelated Monte Carlo simulations model stochastic systems with the assumption
+ that the underlying random variables move independently of each other.
+ A simple example of a Monte Carlo simulation using two independently changing random variables
+ is described below.
+
+In this example a Monte Carlo simulation is used to determine the probability that a simple hinge assembly will
+fall within a required length specification.
+
+The hinge has two components *A* and *B*. The combined length of the two components must be less then 5 centimeters
+to fall within specification.
+
+A random sampling of lengths for component *A* has shown that its length conforms to a
+normal distribution with a mean of 2.2 centimeters and a standard deviation of .0195
+centimeters.
+
+A random sampling of lengths for component *B* has shown that its length conforms
+to a normal distribution with a mean of 2.71 centimeters and a standard deviation of .0198 centimeters.
+
+The Monte Carlo simulation below performs the following steps:
+
+* A normal distribution with a mean of 2.2 and a standard deviation of .0195 is created to model the length of componentA.
+* A normal distribution with a mean of 2.71 and a standard deviation of .0198 is created to model the length of componentB.
+* The `monteCarlo` function is used to simulate component pairs. The `monteCarlo` function
+  calls the *add(sample(componentA), sample(componentB))* function 100000 times and collects the results in an array. Each
+  time the function is called a random sample is drawn from the componentA
+  and componentB length distributions. The `add` function adds the two samples to calculate the combined length.
+  The result of each function run is collected in an array and assigned to the *simresults* variable.
+* An `empiricalDistribution` function is then created from the *simresults* array to model the distribution of the
+  simulation results.
+* Finally, the `cumulativeProbability` function is called on the *simmodel* to determine the cumulative probability
+  that the combined length of the components is 5 or less.
+* Based on the simulation there is .9994371944629039 probability that the combined length of a component pair will
+be 5 or less.
+
+[source,text]
+----
+let(componentA=normalDistribution(2.2,  .0195),
+    componentB=normalDistribution(2.71, .0198),
+    simresults=monteCarlo(add(sample(componentA), sample(componentB)), 100000),
+    simmodel=empiricalDistribution(simresults),
+    prob=cumulativeProbability(simmodel,  5))
+----
+
+When this expression is sent to the /stream handler it responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "prob": 0.9994371944629039
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 660
+      }
+    ]
+  }
+}
+----
+
+
+=== Correlated
+
