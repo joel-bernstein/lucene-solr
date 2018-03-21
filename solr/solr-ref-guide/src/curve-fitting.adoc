@@ -38,10 +38,10 @@ of how large the error is..
 
 [source,text]
 ----
-let(echo="residuals, sumSqerror",
-    a=array(0, 1, 2, 3, 4, 5.7, 6, 7, 6, 5, 5, 3, 2, 1, 0),
-    b=polyfit(a, 3),
-    residuals=ebeSubtract(a, b),
+let(echo="residuals, sumSqError",
+    y=array(0, 1, 2, 3, 4, 5.7, 6, 7, 6, 5, 5, 3, 2, 1, 0),
+    curve=polyfit(y, 3),
+    residuals=ebeSubtract(y, curve),
     sumSqError=sumSq(residuals))
 ----
 
@@ -88,10 +88,10 @@ residuals. This is because the higher polynomial produced a closer fit.
 
 [source,text]
 ----
-let(echo="residuals, sumSqerror",
-    a=array(0, 1, 2, 3, 4, 5.7, 6, 7, 6, 5, 5, 3, 2, 1, 0),
-    b=polyfit(a, 5),
-    residuals=ebeSubtract(a, b),
+let(echo="residuals, sumSqError",
+    y=array(0, 1, 2, 3, 4, 5.7, 6, 7, 6, 5, 5, 3, 2, 1, 0),
+    curve=polyfit(y, 5),
+    residuals=ebeSubtract(y, curve),
     sumSqError=sumSq(residuals))
 ----
 
@@ -151,10 +151,10 @@ case the prediction is made for the *x* value of .5.
 [source,text]
 ----
 let(x=array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
-    a=array(0, 1, 2, 3, 4, 5.7, 6, 7, 6, 5, 5, 3, 2, 1, 0),
-    b=polyfit(x, a, 5),
-    c=lerp(x, b),
-    d=predict(c, .5))
+    y=array(0, 1, 2, 3, 4, 5.7, 6, 7, 6, 5, 5, 3, 2, 1, 0),
+    curve=polyfit(x, y, 5),
+    interp=lerp(x, curve),
+    p=predict(interp, .5))
 ----
 
 When this expression is sent to the /stream handler it
@@ -166,7 +166,7 @@ responds with:
   "result-set": {
     "docs": [
       {
-        "d": 0.4481424148606813
+        "p": 0.4481424148606813
       },
       {
         "EOF": true,
