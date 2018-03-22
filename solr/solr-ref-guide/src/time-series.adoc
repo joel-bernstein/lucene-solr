@@ -112,13 +112,14 @@ The expression below demonstrates the vectorization of the count(*) field.
 
 [source,text]
 ----
-let(a=timeseries(collection1, q=*:*,
-                          field="test_dt",
-                          start="2012-01-20T17:33:18Z",
-                          end="2012-12-20T17:33:18Z",
-                          gap="+1MONTH",
-                          format="YYYY-MM",
-                          count(*)),
+let(a=timeseries(collection1,
+                 q=*:*,
+                 field="test_dt",
+                 start="2012-01-20T17:33:18Z",
+                 end="2012-12-20T17:33:18Z",
+                 gap="+1MONTH",
+                 format="YYYY-MM",
+                 count(*)),
     b=col(a, count(*)))
 ----
 
