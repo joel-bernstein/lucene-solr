@@ -380,15 +380,35 @@ responds with:
 }
 ----
 
-
-
-
-
 == Bicubic Spline
+
+The `bicubicSpline` function can be used to interpolate and predict values
+anywhere within a grid of data.
+
+A simple example will make this more clear.
+
+In example below a bicubic spline is used to interpolate a matrix of real estate data.
+Each row of the matrix represents a specific *year*. Each column of the matrix
+represents a *floor* of the building. The grid of numbers is the average selling price of
+an apartment for each year and floor. For example in 2002 the average selling price for
+the 9th floor was 415000 (row 3, column 3).
+
+The `bicubicSpline` function is then used to
+interpolate the grid and the `predict` function is used to predict a value for year 2003, floor 8.
+Notice that the data is not included in the matrix for year 2003 floor 8. The `bicupicSpline` function
+creates that data point based on the surrounding data in the matrix.
 
 [source,text]
 ----
-
+let(years=array(1998, 2000, 2002, 2004, 2006),
+    floors=array(1, 5, 9, 13, 17, 19),
+    prices = matrix(array(300000, 320000, 330000, 350000, 360000, 370000),
+                    array(320000, 330000, 340000, 350000, 365000, 380000),
+                    array(400000, 410000, 415000, 425000, 430000, 440000),
+                    array(410000, 420000, 425000, 435000, 445000, 450000),
+                    array(420000, 430000, 435000, 445000, 450000, 470000)),
+    bspline=bicubicSpline(years, floors, prices),
+    prediction=predict(bspline, 2003, 8))
 ----
 
 When this expression is sent to the /stream handler it
@@ -396,6 +416,18 @@ responds with:
 
 [source,json]
 ----
-
+{
+  "result-set": {
+    "docs": [
+      {
+        "prediction": 418279.5009328358
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
 ----
 
