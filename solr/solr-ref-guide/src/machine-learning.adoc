@@ -531,20 +531,72 @@ This expression returns the following response:
 }
 ----
 
-
-
 == Fuzzy K-means Clustering
+
+The `fuzzyKmeans` function is a soft clustering algorithm which
+allows vectors to be assigned to more then one cluster. The *fuzziness* parameter
+is a value between 1 and 2 that determines how fuzzy to make the cluster assignment.
+
+After the clustering has been performed the `getMembershipMatrix` function can be called
+on the clustering result to return a matrix describing which clusters each vector belongs to.
+There is a row in the matrix for each vector that was clustered. There is a column in the matrix
+for each cluster. The values in the columns are the probability that the vector belonged to the specific
+cluster.
+
+A simple example will make this more clear. In the example below 300 documents are analyzed and
+then turned into a term vectors matrix. Then the `fuzzyKmeans` clusters the
+term vectors into 12 clusters with a fuzziness factor of 1.25.
+
+The `getMembershipMatrix` function is used to return the membership matrix and the first row
+of membership matrix is retrieved. The `precision` function is then applied to the first row
+of the matrix to make it easier to read.
+
+The output shows a single vector representing the cluster membership probabilities for the first
+term vector. Notice that the term vector has the highest association with the 12th cluster,
+but also has significant associations with the 3rd, 5th, 6th and 7th clusters.
 
 [source,text]
 ----
-
+et(a=select(random(collection3, q="body:oil", rows="300", fl="id, body"),
+                   id,
+                   analyze(body, body_bigram) as terms),
+   b=termVectors(a, maxDocFreq=.09, minDocFreq=.03, minTermLength=14, exclude="_,copyright"),
+   c=fuzzyKmeans(b, 12, fuzziness=1.25),
+   d=getMembershipMatrix(c),
+   e=rowAt(d, 0),
+   f=precision(e, 5))
 ----
 
 This expression returns the following response:
 
 [source,json]
 ----
-
+{
+  "result-set": {
+    "docs": [
+      {
+        "f": [
+          0,
+          0,
+          0.178,
+          0,
+          0.17707,
+          0.17775,
+          0.16214,
+          0,
+          0,
+          0,
+          0,
+          0.30504
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 2157
+      }
+    ]
+  }
+}
 ----
 
 == K-nearest Neighbor
