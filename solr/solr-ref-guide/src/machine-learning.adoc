@@ -1,4 +1,4 @@
-= Machine Learning and Text Mining
+= Machine Learning
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -171,9 +171,9 @@ This expression returns the following response:
 == Distance
 
 The `distance` function computes a distance measure for two
-numeric arrays, or a distance matrix for the columns of a matrix.
+numeric arrays or a *distance matrix* for the columns of a matrix.
 
-There currently four supported distance measures:
+There are four distance measures currently supported:
 
 * euclidean (default)
 * manhattan
@@ -603,20 +603,26 @@ This expression returns the following response:
 
 The `knn` function searches the rows of a matrix for the
 K-nearest neighbors of a search vector. The `knn` function
-returns a matrix of the K-nearest neighbors.
+returns a matrix of the K-nearest neighbors. The `knn` function
+has a *named parameter* called *distance* which specifies the distance measure.
+There are four distance measures currently supported:
+
+* euclidean (Default)
+* manhattan
+* canberra
+* earthMovers
 
 The example below builds on the clustering examples to demonstrate
 the `knn` function.
 
 In the example, the centroids matrix is set to variable *d*. The first
-centroid is selected from the matrix with the `rowAt` function.
+centroid vector is selected from the matrix with the `rowAt` function.
 Then the `knn` function is used to find the 3 nearest neighbors
 to the centroid vector in the term vectors matrix (variable b).
 
-The `knn` function returns a matrix with the 3 nearest neighbors.
-Finally, the top features of the nearest neighbor matrix
-are returned.
-
+The `knn` function returns a matrix with the 3 nearest neighbors based on the
+default distance measure which is euclidean. Finally, the top features
+of the nearest neighbor matrix are returned.
 
 [source,text]
 ----
