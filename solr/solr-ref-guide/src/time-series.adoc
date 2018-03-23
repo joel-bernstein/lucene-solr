@@ -16,10 +16,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-Time series aggregation and analysis are a primary focus of data science.
 This section of the user guide provides an overview of time series aggregation,
-*smoothing* and *differencing*. A section on
-finding the delay in correlation between two time series is also covered.
+*smoothing* and *differencing*.
 
 == Time Series Aggregation
 
@@ -156,15 +154,15 @@ When this expression is sent to the /stream handler it responds with:
 
 == Smoothing
 
-Time series smoothing is often performed to remove the noise from a time series.
-Smoothing is typically done to better understand or confirm the trend in the data.
-The math expressions library has three *moving* approaches
-for smoothing a time series. The *moving* approaches use a summary value
-from a sliding window of data to calculate a new set of smoothed data points.
+Time series smoothing is often done to remove the noise from a time series.
+Smoothing is typically used to better understand or confirm the trend in the data.
+The math expressions library has three *sliding window* approaches
+for smoothing a time series. The *sliding window* approaches use a summary value
+from a sliding window of the data to calculate a new set of smoothed data points.
 
-The three *moving* functions are lagging indicators, which means
+The three *sliding window* functions are lagging indicators, which means
 they don't start to move in the direction of the trend until the trend effects
-the summary value of the sliding window. Because of this lagging quality *moving* smoothing
+the summary value of the sliding window. Because of this lagging quality these smoothing
 functions are often used to confirm the direction of the trend. The longer the sliding
 window the longer the lag.
 
@@ -331,7 +329,7 @@ stationary.
 === First Difference
 
 The actual technique of differencing is to use the difference in values rather then the
-original values. The first difference takes difference between a value and the value
+original values. The *first difference* takes difference between a value and the value
 that came directly before it. The first difference is often used to remove the trend
 from a time series.
 
@@ -386,7 +384,49 @@ When this expression is sent to the /stream handler it responds with:
 
 The `diff` function has an optional second parameter to specify a lag in the difference. If a lag is
 specified the difference is taken between a value and the value at the specified lag in the past.
-Lagged differences are often used to remove seasonality of a time series.
+Lagged differences are often used to remove seasonality from a time series.
+
+The simple example below demonstrates how a lagged difference works.
+Notice that the array in the example follows a simple repeated pattern. This type of pattern
+is often displayed with seasonality. In this example we can remove this pattern using
+the `diff` function with a lag of 4. This will subtract the value lagging four indexes
+behind the current index. Notice that result set size is the original array size minus the lag. This is because
+the `diff` function only returns results for values where the lag of 4 is possible to compute.
+
+[source,text]
+----
+let(a=array(1,2,5,2,1,2,5,2,1,2,5),
+     b=diff(a, 4))
+----
+
+Expression is sent to the /stream handler it responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "b": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
+
+
 
 
 == Finding the Delay
