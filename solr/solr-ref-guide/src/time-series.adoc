@@ -154,8 +154,8 @@ When this expression is sent to the /stream handler it responds with:
 
 == Smoothing
 
-Time series smoothing is often done to remove the noise from a time series.
-Smoothing is typically used to better understand or confirm the trend in the data.
+Time series smoothing is often used to remove the noise from the data and help
+spot underlying the trends.
 The math expressions library has three *sliding window* approaches
 for smoothing a time series. The *sliding window* approaches use a summary value
 from a sliding window of the data to calculate a new set of smoothed data points.
@@ -425,8 +425,3 @@ Expression is sent to the /stream handler it responds with:
   }
 }
 ----
-
-
-
-
-== Finding the Delay
