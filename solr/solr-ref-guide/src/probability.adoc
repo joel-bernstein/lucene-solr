@@ -350,7 +350,7 @@ filesize_d and response_d.
 The `multivariateNormalDistribution` function is then called with the
 array of means for the two fields and the covariance matrix.
 
-Finally ten samples are drawn from the multivariate normal distribution. The samples
+Finally five samples are drawn from the multivariate normal distribution. The samples
 are returned as a matrix, with each row representing one sample. There are two
 columns in the matrix. The first column contains samples for *filesize_d* and the second
 column contains samples for *response_d*. Over the long term the covariance between
@@ -366,7 +366,7 @@ let(a=random(collection2, q="*:*", rows="5000", fl="filesize_d, response_d"),
     e=transpose(matrix(b, c)),
     f=cov(e),
     g=multiVariateNormalDistribution(d, f),
-    h=sample(g, 10))
+    h=sample(g, 5))
 ----
 
 When this expression is sent to the /stream handler it responds with:
