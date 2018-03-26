@@ -25,7 +25,7 @@ functions.
 Before performing machine learning operations its often necessary to
 scale the feature vectors so they can be compared at the same scale.
 
-All the scaling function operate on vectors or matrices.
+All the scaling function operate on vectors and matrices.
 When operating on a matrix the *rows* of the matrix are scaled.
 
 === Min/Max Scaling
