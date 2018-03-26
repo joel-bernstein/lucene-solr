@@ -142,7 +142,7 @@ The example below explores how to use a *multivariate normal distribution* funct
 to model how correlation effects the probability of hinge defects.
 
 In this example 5000 random samples are selected from a collection
-of assembled hinges. Each sample contains
+containing length data for assembled hinges. Each sample contains
 the fields *componentA_d* and *componentB_d*.
 
 Both fields are then vectorized. The *componentA_d* vector is stored in
@@ -155,7 +155,7 @@ an *observation* matrix where each row contains one observation of
 *componentA_d* and *componentB_d*. A covariance matrix is then created from the columns of
 the observation matrix with the
 `cov` function. The covariance matrix describes the covariance between
-componentA_d and componentB_d.
+*componentA_d* and *componentB_d*.
 
 The `multivariateNormalDistribution` function is then called with the
 array of means for the two fields and the covariance matrix. The model
@@ -170,7 +170,7 @@ multivariate normal distribution will conform to the covariance matrix used to c
 
 Just as in the non-correlated example an empirical distribution is used to model probabilities
 of the simulation vector and the `cumulativeProbability` function is used to compute the cumulative
-probability that length will be 5 centimeters or less.
+probability that the combined component length will be 5 centimeters or less.
 
 Notice that the probability of a hinge meeting specification has dropped to 0.9889517439980468.
 This is because the strong correlation

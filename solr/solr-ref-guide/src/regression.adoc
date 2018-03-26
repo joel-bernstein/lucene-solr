@@ -23,17 +23,20 @@ This section of the math expressions user guide covers simple and multivariate l
 == Simple Linear Regression
 
 The `regress` function is used to build a linear regression model
-between two numeric arrays representing two random variables.
+between two random variables. Sample observations are provided with two
+numeric arrays. The first numeric array is the *independent variable* and
+the second array is the *dependent variable*.
 
-The example below performs a simple linear regression on a random sample of data.
-Each random sample contains two fields: *response_d* and *filesize_d*. These two
-fields are vectorized and stored in variables *b* and *c*.
+In the example below the `random` function selects 5000 random samples each containing
+the fields *filesize_d* and *response_d*. The two fields are vectorized
+and stored in variables *b* and *c*. Then the `regress` function performs a regression
+analysis on the two numeric arrays.
 
 The `regress` function returns a single tuple with the results of the regression
 analysis.
 
-Note that in this regression analysis the value of *RSquared* is *.75*. This means that the
-regression model explains 75% of the variability of the *response_d* variable.
+Note that in this regression analysis the value of *RSquared* is *.75*. This means that changes in
+*filesize_d* explain 75% of the variability of the *response_d* variable.
 
 [source,text]
 ----
@@ -76,12 +79,12 @@ When this expression is sent to the /stream handler it responds with:
 
 === Prediction
 
-The `predict` function uses the regression analysis to make predictions.
+The `predict` function uses the regression model to make predictions.
 Using the example above the regression model can be used to predict the value
 of *response_d* given a value for *filesize_d*.
 
 In the example below the `predict` function uses the regression analysis to predict
-the value of *response_d* if *filesize_d* is 40000.
+the value of *response_d* for the *filesize_d* value of 40000.
 
 
 [source,text]
@@ -228,10 +231,10 @@ Notice that the two independent variables *filesize_d* and *service_d* are vecto
 in the variables *b* and *c*. The variables *b* and *c* are then added as rows to a `matrix`. The matrix is
 then transposed so that each row in the matrix represents one observation with *filesize_d* and *service_d*.
 The `olsRegress` function then performs the multivariate regression analysis using the observation matrix as the
-independent variables and *response_d* values, stored in variable c as the dependent variable.
+independent variables and the *response_d* values, stored in variable *d*, as the dependent variable.
 
 Notice that the RSquared of the regression analysis is 1. This means that linear relationship between
-filesize_d and service_d describe 100% of the variability in the *response_d* variable.
+*filesize_d* and *service_d* describe 100% of the variability of the *response_d* variable.
 
 [source,text]
 ----
@@ -331,9 +334,9 @@ When this expression is sent to the /stream handler it responds with:
 }
 ----
 
-The `predict` function can also make predictions for more one multivariate observation. In this scenario
-am observation matrix used. In the example below the observation matrix used build multivariate is passed
-to the `predict` function and it returns an array of predictions.
+The `predict` function can also make predictions for more than one multivariate observation. In this scenario
+an observation matrix used. In the example below the observation matrix used to build the multivariate regression model
+is passed to the `predict` function and it returns an array of predictions.
 
 
 [source,text]

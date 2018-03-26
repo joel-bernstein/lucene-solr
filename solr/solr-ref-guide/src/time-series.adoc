@@ -16,7 +16,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-This section of the user guide provides an overview of time series aggregation,
+This section of the user guide provides an overview of time series *aggregation*,
 *smoothing* and *differencing*.
 
 == Time Series Aggregation
@@ -103,8 +103,8 @@ When this expression is sent to the /stream handler it responds with:
 Before a time series result can be operated on by math expressions
  the data will need to be vectorized. Specifically
 in the example above, the aggregation field count(*) will need to by moved into an array.
-As described in the Vectorization section of the user guide, the `col` function can be used
-to move a column of numbers from a list of tuples into an array.
+As described in the Streams and Vectorization section of the user guide, the `col` function can be used
+to copy a numeric column from a list of tuples into an array.
 
 The expression below demonstrates the vectorization of the count(*) field.
 
@@ -154,34 +154,34 @@ When this expression is sent to the /stream handler it responds with:
 
 == Smoothing
 
-Time series smoothing is often used to remove the noise from the data and help
-spot underlying the trends.
+Time series smoothing is often used to remove the noise from a time series and help
+spot the underlying trends.
 The math expressions library has three *sliding window* approaches
-for smoothing a time series. The *sliding window* approaches use a summary value
+for time series smoothing. The *sliding window* approaches use a summary value
 from a sliding window of the data to calculate a new set of smoothed data points.
 
 The three *sliding window* functions are lagging indicators, which means
 they don't start to move in the direction of the trend until the trend effects
 the summary value of the sliding window. Because of this lagging quality these smoothing
-functions are often used to confirm the direction of the trend. The longer the sliding
-window the longer the lag.
+functions are often used to confirm the direction of the trend.
 
 === Moving Average
 
-The `movingAvg` function computes a simple moving average over a sliding of the data.
+The `movingAvg` function computes a simple moving average over a sliding window of data.
 The example below generates a time series, vectorizes the count(*) field and computes the
 moving average with a window size of 3.
 
-Notice that the result of the moving average is smaller
+The moving average function returns an array that is of shorter length
 then the original data set. This is because results are generated only when a full window of data
 is available for computing the average. With a window size of three the moving average will
 begin generating results at the 3rd value. The prior values are not included in the result.
 
-This is true for the *moving* functions.
+This is true for all the sliding window functions.
 
 [source,text]
 ----
-let(a=timeseries(collection1, q=*:*,
+let(a=timeseries(collection1,
+                 q=*:*,
                  field="test_dt",
                  start="2012-01-20T17:33:18Z",
                  end="2012-12-20T17:33:18Z",
@@ -223,9 +223,9 @@ When this expression is sent to the /stream handler it responds with:
 
 === Exponential Moving Average
 
-The `expMovingAvg` function uses different formula for computing the moving average that
-responds faster to changes in the underlying data. This means that is less of a lagging indicator
-then the simple moving average.
+The `expMovingAvg` function uses a different formula for computing the moving average that
+responds faster to changes in the underlying data. This means that it is
+less of a lagging indicator then the simple moving average.
 
 Below is an example that computes an exponential moving average:
 
@@ -273,14 +273,15 @@ When this expression is sent to the /stream handler it responds with:
 
 === Moving Median
 
-The `movingMedian` function using the median of sliding window rather then an average. In many cases
-this will be more *robust* to outliers then the maving average approaches.
+The `movingMedian` function uses the median of the sliding window rather than the average.
+In many cases the moving median will be more *robust* to outliers then moving averages.
 
 Below is an example computing the moving median:
 
 [source,text]
 ----
-let(a=timeseries(collection1, q=*:*,
+let(a=timeseries(collection1,
+                 q=*:*,
                  field="test_dt",
                  start="2012-01-20T17:33:18Z",
                  end="2012-12-20T17:33:18Z",
@@ -324,22 +325,24 @@ When this expression is sent to the /stream handler it responds with:
 
 Differencing is often used to remove the
 trend or seasonality from a time series. This is known as making a time series
-stationary.
+*stationary*.
 
 === First Difference
 
-The actual technique of differencing is to use the difference in values rather then the
-original values. The *first difference* takes difference between a value and the value
+The actual technique of differencing is to use the difference between values rather then the
+original values. The *first difference* takes the difference between a value and the value
 that came directly before it. The first difference is often used to remove the trend
 from a time series.
 
 In the example below, the `diff` function computes the first difference of a time series.
-Notice that the result sets length is one value smaller then original result set. This is because
-the `diff` function only returns a result for values where the prior value has been subtracted.
+The result array length is one value smaller then the original array.
+This is because the `diff` function only returns a result for values
+where the prior value has been subtracted.
 
 [source,text]
 ----
-let(a=timeseries(collection1, q=*:*,
+let(a=timeseries(collection1,
+                 q=*:*,
                  field="test_dt",
                  start="2012-01-20T17:33:18Z",
                  end="2012-12-20T17:33:18Z",
@@ -382,16 +385,17 @@ When this expression is sent to the /stream handler it responds with:
 
 === Lagged Differences
 
-The `diff` function has an optional second parameter to specify a lag in the difference. If a lag is
-specified the difference is taken between a value and the value at the specified lag in the past.
-Lagged differences are often used to remove seasonality from a time series.
+The `diff` function has an optional second parameter to specify a lag in the difference.
+If a lag is specified the difference is taken between a value and the value at a specified
+lag in the past. Lagged differences are often used to remove seasonality from a time series.
 
-The simple example below demonstrates how a lagged difference works.
+The simple example below demonstrates how lagged differencing works.
 Notice that the array in the example follows a simple repeated pattern. This type of pattern
 is often displayed with seasonality. In this example we can remove this pattern using
 the `diff` function with a lag of 4. This will subtract the value lagging four indexes
-behind the current index. Notice that result set size is the original array size minus the lag. This is because
-the `diff` function only returns results for values where the lag of 4 is possible to compute.
+behind the current index. Notice that result set size is the original array size minus the lag.
+This is because the `diff` function only returns results for values where the lag of 4
+is possible to compute.
 
 [source,text]
 ----

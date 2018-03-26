@@ -50,8 +50,8 @@ record in your Solr Cloud cluster computable.
 
 == link:regression.adoc[Linear Regression]
 
-== link:curve-fitting.adoc[Curve Fitting]
-
 == link:numerical-analysis.adoc[Interpolation, Derivatives and Integrals]
+
+== link:curve-fitting.adoc[Curve Fitting]
 
 == link:machine-learning.adoc[Machine Learning]

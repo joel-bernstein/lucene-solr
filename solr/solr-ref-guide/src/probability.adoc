@@ -80,21 +80,22 @@ The `enumeratedDistribution` function creates a discrete
 distribution function from a data set of discrete values,
 or from and enumerated list of values and probabilities.
 
-Enumerated distribution functions can be used interchangeable
-with any of the theoretical discreet distributions.
+Enumerated distribution functions can be used interchangeably
+with any of the theoretical discrete distributions.
 
 === Cumulative Probability
 
 The `cumulativeProbability` function can be used with all
 probability distributions to calculate the
-cumulative probability of a random variable.
+cumulative probability of encountering a specific
+random variable within a specific distribution.
 
 Below is example of calculating the cumulative probability
 of a random variable within a normal distribution.
 
 In the example a normal distribution function is created
 with a mean of 10 and a standard deviation of 5. Then
-cumulative probability of the value 12 is calculated for this
+the cumulative probability of the value 12 is calculated for this
 specific distribution.
 
 [source,text]
@@ -125,11 +126,13 @@ When this expression is sent to the /stream handler it responds with:
 Below is an example of a cumulative probability calculation
 using an empirical distribution.
 
-In the example an empirical distribution was create from a random
-sample taken from the *price_f* field, which was created
-using a random uniform distribution between 0 and 1.
+In the example an empirical distribution is created from a random
+sample taken from the *price_f* field.
 
-The cumulative probability of value .75 is then calculated.
+The cumulative probability of the value .75 is then calculated.
+The *price_f* field in this example was generated using a
+uniform real distribution between 0 and 1, so the output of the
+ `cumulativeProbability` function is very close to .75.
 
 [source,text]
 ----
@@ -165,7 +168,7 @@ distribution function to compute the probability of a
 discrete value.
 
 Below is an example which calculates the probability
-of a discrete value within a poisson distribution.
+of a discrete value within a Poisson distribution.
 
 In the example a Poisson distribution function is created
 with a mean of 100. Then the
@@ -200,9 +203,9 @@ When this expression is sent to the /stream handler it responds with:
 Below is an example of a probability calculation
 using an enumerated distribution.
 
-In the example an enumerated distribution was create from a random
+In the example an enumerated distribution is created from a random
 sample taken from the *day_i* field, which was created
-using a random uniform distribution between 0 and 30.
+using a uniform integer distribution between 0 and 30.
 
 The probability of the discrete value 10 is then calculated.
 
@@ -239,7 +242,7 @@ All probability distributions support sampling. The `sample`
 function returns 1 or more random samples from a probability
 distribution.
 
-Below is an example of a single sample being taken from
+Below is an example drawing a single sample from
 a normal distribution.
 
 [source,text]
@@ -267,7 +270,7 @@ When this expression is sent to the /stream handler it responds with:
 }
 ----
 
-Below is an example of 10 samples being taken from a normal
+Below is an example drawing 10 samples from a normal
 distribution.
 
 [source,text]
@@ -345,10 +348,11 @@ an *observation* matrix where each row contains one observation of
 *filesize_d* and *response_d*. A covariance matrix is then created from the columns of
 the observation matrix with the
 `cov` function. The covariance matrix describes the covariance between
-filesize_d and response_d.
+*filesize_d* and *response_d*.
 
 The `multivariateNormalDistribution` function is then called with the
-array of means for the two fields and the covariance matrix.
+array of means for the two fields and the covariance matrix. The model for the
+multivariate normal distribution is assigned to variable *g*.
 
 Finally five samples are drawn from the multivariate normal distribution. The samples
 are returned as a matrix, with each row representing one sample. There are two

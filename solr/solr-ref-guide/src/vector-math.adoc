@@ -16,14 +16,14 @@
 // specific language governing permissions and limitations
 // under the License.
 
-This section of the user guide deals with vector math and
+This section of the user guide covers vector math and
 vector manipulation functions.
 
 == Arrays
 
-Arrays can be created with `array` function.
+Arrays can be created with the `array` function.
 
-For example, the expression below creates a numeric array with
+For example the expression below creates a numeric array with
 three elements:
 
 [source,text]
@@ -55,10 +55,9 @@ a json array.
 }
 ----
 
-== Array Manipulation
+== Array Operations
 
-Arrays can be passed as parameters to functions that operate on arrays. There are set of functions
-that are designed to manipulate arrays.
+Arrays can be passed as parameters to functions that operate on arrays.
 
 For example, an array can be reversed with the `rev` function:
 
@@ -118,7 +117,7 @@ When this expression is sent to the /stream handler it responds with:
 ----
 
 A slice of an array can be taken with the `copyOfRange` function, which
-copies an array from a start and end range.
+copies elements of an array from a start and end range.
 
 [source,text]
 ----
@@ -185,7 +184,7 @@ When this expression is sent to the /stream handler it responds with:
 
 The vector norm functions provide different formulas for calculating vector magnitude.
 
-The example below performs the l2norm calculation of an array.
+The example below calculates the *l2norm* of an array.
 
 [source,text]
 ----
@@ -214,11 +213,11 @@ When this expression is sent to the /stream handler it responds with:
 == Scalar Vector Math
 
 Scalar vector math functions add, subtract, multiple or divide a scalar value with every value in a vector.
-The following vector math functions perform these operations: `scalarAdd`, `scalarSubtract`, `scalarMultiply`
+The following functions perform these operations: `scalarAdd`, `scalarSubtract`, `scalarMultiply`
 and `scalarDivide`.
 
 
-Below is an example the `scalarMultiply` function, which is multiplying the scalar value 3 with
+Below is an example of the `scalarMultiply` function, which multiplies the scalar value 3 with
 every value of an array.
 
 [source,text]
@@ -252,8 +251,8 @@ When this expression is sent to the /stream handler it responds with:
 == Element-By-Element Vector Math
 
 Two vectors can be added, subtracted, multiplied and divided using element-by-element
-vector math functions. The following element-by-element vector math functions perform
-these operations: `ebeAdd`, `ebeSubtract`, `ebeMultiply`, `ebeDivide`.
+vector math functions. The following element-by-element vector math functions are:
+`ebeAdd`, `ebeSubtract`, `ebeMultiply`, `ebeDivide`.
 
 The expression below performs the element-by-element subtraction of two arrays.
 

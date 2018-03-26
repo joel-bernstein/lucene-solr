@@ -291,8 +291,8 @@ When this expression is sent to the /stream handler it responds with:
 
 == Percentiles
 
-The `percentile` function returns an estimated value for a specific percentile in
-a numeric array. The example below returns the estimation for the 95th percentile
+The `percentile` function returns the estimated value for a specific percentile in
+a sample set. The example below returns the estimation for the 95th percentile
 of the *price_f* field.
 
 [source,text]
@@ -328,8 +328,7 @@ together.
 
 === Covariance and Covariance Matrices
 
-The `cov` function calculates the covariance of two
-numeric arrays.
+The `cov` function calculates the covariance of two sample sets of data.
 
 In the example below covariance is calculated for two numeric
 arrays.
@@ -421,14 +420,15 @@ When this expression is sent to the /stream handler it responds with:
 Correlation is measure of covariance that has been scaled between
 -1 and 1.
 
-There are support for three types of correlation:
+Three correlation types are supported:
 
 * *pearsons* (default)
 * *kendalls*
 * *spearmans*
 
-The type of correlation is specified as a named parameter in the
-function call.
+The type of correlation is specified by adding the *type* named parameter in the
+function call. The example below demonstrates the use of the *type*
+named parameter.
 
 [source,text]
 ----
@@ -457,7 +457,7 @@ When this expression is sent to the /stream handler it responds with:
 ----
 
 Like the `cov` function, the `corr` function automatically builds a correlation matrix
-if a matrix passed as a parameter. The correlation matrix is built by correlating the columns
+if a matrix is passed as a parameter. The correlation matrix is built by correlating the columns
 of the matrix passed in.
 
 == Statistical Inference Tests
@@ -468,7 +468,7 @@ can be used to infer the reliability of the test for the entire population.
 The following statistical inference tests are available:
 
 * `anova`: One-Way-Anova tests if there is a statistically significant difference in the
-means of two or random samples.
+means of two or more random samples.
 
 * `ttest`: The T-test tests if there is a statistically significant difference in the means of two
 random samples.
@@ -479,18 +479,19 @@ in the means of two random samples with paired data.
 * `gTestDataSet`: The G-test tests if two samples of binned discrete data were drawn
 from the same population.
 
-* `chiSquareDataset`: The Chi-Squared Test tests if two samples of binned discrete data were
+* `chiSquareDataset`: The Chi-Squared test tests if two samples of binned discrete data were
 drawn from the same population.
 
-* `mannWhitney`: The Mann-Whitney test is a non-parametric test that tests if two samples were pulled
+* `mannWhitney`: The Mann-Whitney test is a non-parametric test that tests if two
+samples of continuous were pulled
 from the same population. The Mann-Whitney test is often used instead of the T-test when the
 underlying assumptions of the T-test are not
 met.
 
 * `ks`: The Kolmogorov-Smirnov test tests if two samples of continuous data were drawn from
-the same population.
+the same distribution.
 
-Below is a simple example of a t-test performed on two random samples.
+Below is a simple example of a T-test performed on two random samples.
 The returned p-value of .93 means we can accept the null hypothesis
 that the two samples do not have statistically significantly differences in the means.
 

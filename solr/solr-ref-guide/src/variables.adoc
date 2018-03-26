@@ -18,14 +18,16 @@
 
 == The Let Expressions
 
-The `let` expression sets variables and and by default returns
-the value of the last variable. The output of any streaming expression or math expression
-can be set to a variable.
+The `let` expression sets variables and returns
+the value of the last variable by default. The output of any streaming expression
+or math expression can be set to a variable.
 
-Below is a simple example setting three variables `a`, `b`
-and `c`. `a` and `b` are set to arrays. The variable `c` is set
+Below is a simple example setting three variables *a*, *b*
+and *c*. Variables *a* and *b* are set to arrays. The variable *c* is set
 to the output of the `ebeAdd` function which performs element-by-element
 addition of the two arrays.
+
+Notice that the last variable, *c*, is returned.
 
 [source,text]
 ----

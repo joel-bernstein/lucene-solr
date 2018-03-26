@@ -17,7 +17,7 @@
 // under the License.
 
 This section of the math expression user guide covers *interpolation*, *derivatives* and *integrals*.
-These three related topics are part of the wider field of numerical analysis.
+These three interrelated topics are part of the field of mathematics called *numerical analysis*.
 
 == Interpolation
 
@@ -28,8 +28,8 @@ control points.
 The interpolation functions described below all return an *interpolation model*
 that can be passed to other functions which make use of the sampling capability.
 
-On its own the interpolation model returns an array containing predictions for each of the
-control points. This is useful in the case `loess` interpolation which first smooths the control points
+If returned directly the interpolation model returns an array containing predictions for each of the
+control points. This is useful in the case of `loess` interpolation which first smooths the control points
 and then interpolates the smoothed points. All other interpolation function simply return the original
 control points because interpolation predicts a curve that passes through the original control points.
 
@@ -123,10 +123,8 @@ The `loess` function is a smoothing interpolator which means it doesn't derive
 a function that passes through the original control points. Instead the `loess` function
 returns a function that smooths the original control points.
 
-A technique known as local regression is used to compute the smoothed curve. Local regression
-performs a regression analysis for the k-nearest neighbors in the data set. Then
-a regression analysis between the next set of k-nearest neighbors is performed until
-a curve has been derived for the entire data set. The size of the neighborhood can be adjusted
+A technique known as local regression is used to compute the smoothed curve.  The size of the
+neighborhood of the local regression can be adjusted
 to control how close the new curve conforms to the original control points.
 
 The `loess` function is passed *x* and *y* axises and fits a smooth curve to the data.
@@ -257,11 +255,10 @@ responds with:
 The derivative of a function measures the rate of change of the *y* value in respects to the
 rate of change of the *x* value.
 
-The `derivative` function returns the derivative of each control point of an
-interpolated curve. The `derivative` function can also return a derivative of
-a derivative.
+The `derivative` function can compute the derivative of any *interpolation* function.
+The `derivative` function can also compute the derivative of a derivative.
 
-The example below computes a derivative of a `loess` interpolation.
+The example below computes the derivative for a `loess` interpolation function.
 
 [source,text]
 ----
@@ -316,7 +313,7 @@ responds with:
 == Integrals
 
 An integral is a measure of the volume underneath a curve.
-The `integrate` function computes an integral for specific
+The `integrate` function computes an integral for a specific
 range of an interpolated curve.
 
 In the example below the `integrate` function computes an
@@ -394,9 +391,9 @@ an apartment for each year and floor. For example in 2002 the average selling pr
 the 9th floor was 415000 (row 3, column 3).
 
 The `bicubicSpline` function is then used to
-interpolate the grid and the `predict` function is used to predict a value for year 2003, floor 8.
-Notice that the data is not included in the matrix for year 2003 floor 8. The `bicupicSpline` function
-creates that data point based on the surrounding data in the matrix.
+interpolate the grid, and the `predict` function is used to predict a value for year 2003, floor 8.
+Notice that the matrix does not included a data point for year 2003, floor 8. The `bicupicSpline`
+function creates that data point based on the surrounding data in the matrix.
 
 [source,text]
 ----
