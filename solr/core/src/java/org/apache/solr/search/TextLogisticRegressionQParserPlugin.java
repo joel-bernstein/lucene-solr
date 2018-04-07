@@ -23,6 +23,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.TreeSet;
+import java.util.HashSet;
 
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
@@ -33,6 +36,7 @@ import org.apache.lucene.index.TermsEnum;
 import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.util.BitSetIterator;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.SparseFixedBitSet;
 import org.apache.solr.client.solrj.io.ClassificationEvaluation;
@@ -167,6 +171,7 @@ public class TextLogisticRegressionQParserPlugin extends QParserPlugin {
 
     public void finish() throws IOException {
 
+      HashSet<Integer> rdocs = getRandomDocs(docsSet);
       Map<Integer, double[]> docVectors = new HashMap<>();
       Terms terms = ((SolrIndexSearcher)searcher).getSlowAtomicReader().terms(trainingParams.feature);
       TermsEnum termsEnum = terms == null ? TermsEnum.EMPTY : terms.iterator();
@@ -178,7 +183,7 @@ public class TextLogisticRegressionQParserPlugin extends QParserPlugin {
           postingsEnum = termsEnum.postings(postingsEnum);
           while (postingsEnum.nextDoc() != DocIdSetIterator.NO_MORE_DOCS) {
             int docId = postingsEnum.docID();
-            if (docsSet.get(docId)) {
+            if (rdocs.contains(docId)) {
               double[] vector = docVectors.get(docId);
               if (vector == null) {
                 vector = new double[trainingParams.terms.length+1];
@@ -259,7 +264,68 @@ public class TextLogisticRegressionQParserPlugin extends QParserPlugin {
       return d;
     }
 
+    private HashSet<Integer> getRandomDocs(SparseFixedBitSet idocs) {
+      BitSetIterator it = new BitSetIterator(idocs, 1);
+      TreeSet<HashDoc> batch = new TreeSet();
+      Random rand = new Random();
+      int seed = rand.nextInt();
+      int doc = -1;
+      while((doc = it.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
+        int hash = hash(seed+doc);
+        batch.add(new HashDoc(doc, hash));
+        if(batch.size() > 500) {
+          batch.pollLast();
+        }
+      }
+
+      HashSet<Integer> randomDocs = new HashSet();
+      while(batch.size() > 0) {
+        randomDocs.add(batch.pollLast().doc);
+      }
+
+      return randomDocs;
+    }
+
+    private static int hash(int key) {
+      key = ~key + (key << 15); // key = (key << 15) - key - 1;
+      key = key ^ (key >>> 12);
+      key = key + (key << 2);
+      key = key ^ (key >>> 4);
+      key = key * 2057; // key = (key + (key << 3)) + (key << 11);
+      key = key ^ (key >>> 16);
+      return key >>> 1;
+    }
+
+    private class HashDoc implements Comparable<HashDoc> {
+      private int hash;
+      private int doc;
+
+      public HashDoc(int doc, int hash) {
+        this.doc = doc;
+        this.hash = hash;
+      }
+
+      public int getDoc() {
+        return doc;
+      }
+
+      public int compareTo(HashDoc doc) {
+        if(hash > doc.hash) {
+          return 1;
+        } else if(hash < doc.hash) {
+          return -1;
+        } else {
+          return 0;
+        }
+      }
+    }
   }
+
+
+
+
+
+
 
   private static class TrainingParams {
     public final String feature;
