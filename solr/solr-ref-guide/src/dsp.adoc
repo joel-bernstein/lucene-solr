@@ -327,8 +327,19 @@ When this expression is sent to the /stream handler it responds with:
 
 === Convolutional Smoothing
 
-The moving average can also be computed with the convol
+The moving average can also be computed with convolutional math. In the example
+below the `conv` function is used to compute the moving average of the first array
+by applying the second array as the weighted filter.
 
+Looking at the result, we see that it is not exactly the same as the result
+of the `movingAvg` function. That is because the `conv` effectively pads zeros
+to the front and back of the first vector so that the window size is always full.
+It is useful to think of the first vector as:
+
+[source,text]
+----
+0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1, 0, 0, 0, 0
+----
 
 [source,text]
 ----
@@ -374,11 +385,165 @@ When this expression is sent to the /stream handler it responds with:
 }
 ----
 
+We can clean up the result by using the `copyOfRange` function to copy a range of the result that drops the first and last 4 values of
+the convolution result. In the example below the `precision` function is also also used to remove floating point errors from the
+convolution result. When this is done the output is exactly the same as the `movingAvg` function.
+
+[source,text]
+----
+let(a=array(1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1),
+    b=array(.2, .2, .2, .2, .2),
+    c=conv(a, b),
+    d=copyOfRange(c, 4, 13),
+    e=precision(d, 2))
+----
+
+When this expression is sent to the /stream handler it responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "e": [
+          3,
+          4,
+          5,
+          5.6,
+          5.8,
+          5.6,
+          5,
+          4,
+          3
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
 
 == Cross-Correlation
 
+Cross-correlation is used to determine the delay between two signals. This is accomplished by sliding one signal across another
+and calculating the dot product at each shift. The dot products are collected into a vector which represents the correlation
+at each shift. The highest dot product in the cross-correlation vector is the point where the two signals are most closely correlated.
+
+The sliding dot product used in convolution can also be used to represent cross-correlation between two vectors. The only
+difference in the formula when representing correlation is that the second vector is *not reversed*.
+
+Notice in the example below that the second vector is reversed by the `rev` function before it is operated on by the `conv`.
+The `conv` function reverses the second vector so it will be flipped back to its original order to perform the correlation calculation
+rather then the convolution calculation.
+
+Notice in the result the highest value is 217. This is the point where the two vectors have the highest correlation.
+
+[source,text]
+----
+let(a=array(1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1),
+    b=array(4, 5, 6, 7, 6, 5, 4, 3, 2, 1),
+    c=conv(a, rev(b)))
+----
+
+When this expression is sent to the /stream handler it responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "c": [
+          1,
+          4,
+          10,
+          20,
+          35,
+          56,
+          84,
+          116,
+          149,
+          180,
+          203,
+          216,
+          217,
+          204,
+          180,
+          148,
+          111,
+          78,
+          50,
+          28,
+          13,
+          4
+        ]
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
+
 == Find Delay
 
+It is fairly simple to compute the delay from the cross-correlation result, but a convenience function called `finddelay` can
+be used to find the delay. Under the covers the `finddelay` uses convolutional math to compute the cross-correlation vector
+and then computes the delay between the two signals.
+
+Below is an example of the `finddelay` function. Notice that the `finddelay` function reports a 3 period delay between the first
+and second signal.
+
+[source,text]
+----
+let(a=array(1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1),
+    b=array(4, 5, 6, 7, 6, 5, 4, 3, 2, 1),
+    c=finddelay(a, b))
+----
+
+When this expression is sent to the /stream handler it responds with:
+
+[source,json]
+----
+{
+  "result-set": {
+    "docs": [
+      {
+        "c": 3
+      },
+      {
+        "EOF": true,
+        "RESPONSE_TIME": 0
+      }
+    ]
+  }
+}
+----
+
 == Auto-Correlation
+
+Auto-correlation measures the degree to which a signal is correlated with itself. Auto-correlation is used to determine
+if a vector contains a signal or is purely random.
+
+A few examples with plots will help to understand the concepts.
+
+In the first example `sin` function is wrapped around a `sequence` function to generate sine wave. The result of this
+can is plotted in the image below. Notice that there is a very clear structure to plot that is clearly not random.
+
+[source,text]
+----
+sin(sequence(256, 0, 6)
+----
+
+image::images/math-expressions/signal.png[]
+
+
+
 
 == Discrete Fourier Transform
