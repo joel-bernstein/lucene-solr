@@ -568,6 +568,24 @@ let(a=sin(sequence(256, 0, 6)),
 image::images/math-expressions/hidden-signal.png[]
 
 
+In the next examples perform auto-correlation with each of the signals to see what the what plots look like.
+
+In the example below the `conv` function is used to auto-correlate the sine wave. Notice that the `conv` function
+is simply correlating the sine wave with itself.
+
+
+[source,text]
+----
+let(a=sin(sequence(256, 0, 6)),
+    d=conv(a, rev(a)),
+----
+
+image::images/math-expressions/signal-autocorrelation.png[]
+
+
+
+
+
 
 
 
