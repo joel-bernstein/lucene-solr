@@ -555,6 +555,23 @@ sample(uniformDistribution(-1.5, 1.5), 256)
 image::images/math-expressions/noise.png[]
 
 
+In the next example the random noise is added to the sine wave. The result of this is plotted in the image below.
+Notice that the sine wave has been hidden somewhat by the noise.
+
+[source,text]
+----
+let(a=sin(sequence(256, 0, 6)),
+    b=sample(uniformDistribution(-1.5, 1.5), 256),
+    c=ebeAdd(a, b))
+----
+
+image::images/math-expressions/hidden-signal.png[]
+
+
+
+
+
+
 
 
 
