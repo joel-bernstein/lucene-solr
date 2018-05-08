@@ -596,15 +596,17 @@ let(a=sample(uniformDistribution(-1.5, 1.5), 256),
 image::images/math-expressions/noise-autocorrelation.png[]
 
 
+In the example below auto-correlation is performed with the vector with sine wave hidden within the noise.
 
+[source,text]
+----
+let(a=sin(sequence(256, 0, 6)),
+    b=sample(uniformDistribution(-1.5, 1.5), 256),
+    c=ebeAdd(a, b),
+    d=conv(c, rev(c))
+----
 
-
-
-
-
-
-
-
+image::images/math-expressions/hidden-signal-autocorrelation.png[]
 
 
 == Discrete Fourier Transform
