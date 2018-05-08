@@ -584,6 +584,20 @@ image::images/math-expressions/signal-autocorrelation.png[]
 
 
 
+In the example below auto-correlation is performed with the vector of pure noise.
+
+
+[source,text]
+----
+let(a=sample(uniformDistribution(-1.5, 1.5), 256),
+    d=conv(a, rev(a)),
+----
+
+image::images/math-expressions/noise-autocorrelation.png[]
+
+
+
+
 
 
 
