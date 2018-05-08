@@ -534,14 +534,26 @@ if a vector contains a signal or is purely random.
 A few examples with plots will help to understand the concepts.
 
 In the first example `sin` function is wrapped around a `sequence` function to generate sine wave. The result of this
-can is plotted in the image below. Notice that there is a very clear structure to plot that is clearly not random.
+is plotted in the image below. Notice that there is a very clear structure to plot that is clearly not random.
 
 [source,text]
 ----
-sin(sequence(256, 0, 6)
+sin(sequence(256, 0, 6))
 ----
 
 image::images/math-expressions/signal.png[]
+
+In the next example the `sample` function draws 256 samples from a `uniformDistribution` to create a vector a random
+vector of data. The result of this is plotted in the image below. Notice that there is no clear structure to the
+data which appears to be random.
+
+[source,text]
+----
+sample(uniformDistribution(-1.5, 1.5), 256)
+----
+
+image::images/math-expressions/noise.png[]
+
 
 
 
