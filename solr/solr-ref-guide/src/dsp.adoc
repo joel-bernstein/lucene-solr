@@ -526,15 +526,15 @@ When this expression is sent to the /stream handler it responds with:
 }
 ----
 
-== Auto-Correlation
+== Autocorrelation
 
-Auto-correlation measures the degree to which a signal is correlated with itself. Auto-correlation is used to determine
+Autocorrelation measures the degree to which a signal is correlated with itself. Autocorrelation is used to determine
 if a vector contains a signal or is purely random.
 
 A few examples with plots will help to understand the concepts.
 
-In the first example `sin` function is wrapped around a `sequence` function to generate sine wave. The result of this
-is plotted in the image below. Notice that there is a very clear structure to plot that is clearly not random.
+In the first example the `sin` function is wrapped around a `sequence` function to generate sine wave. The result of this
+is plotted in the image below. Notice that there is a structure to plot that is clearly not random.
 
 [source,text]
 ----
@@ -543,9 +543,10 @@ sin(sequence(256, 0, 6))
 
 image::images/math-expressions/signal.png[]
 
-In the next example the `sample` function draws 256 samples from a `uniformDistribution` to create a vector a random
+
+In the next example the `sample` function is used to draw 256 samples from a `uniformDistribution` to create a random
 vector of data. The result of this is plotted in the image below. Notice that there is no clear structure to the
-data which appears to be random.
+data and the data clearly appears to be random.
 
 [source,text]
 ----
@@ -555,8 +556,10 @@ sample(uniformDistribution(-1.5, 1.5), 256)
 image::images/math-expressions/noise.png[]
 
 
-In the next example the random noise is added to the sine wave. The result of this is plotted in the image below.
-Notice that the sine wave has been hidden somewhat by the noise.
+In the next example the random noise is added to the sine wave using the `ebeAdd` function.
+The result of this is plotted in the image below. Notice that the sine wave has been hidden
+somewhat within the noise. Its difficult to say for sure if there is structure. As the plot
+becomes more dense it can become harder to see a pattern hidden within noise.
 
 [source,text]
 ----
@@ -568,11 +571,16 @@ let(a=sin(sequence(256, 0, 6)),
 image::images/math-expressions/hidden-signal.png[]
 
 
-In the next examples perform auto-correlation with each of the signals to see what the what plots look like.
+In the next examples autocorrelation is performed with each of the signals to see what the
+what the autocorrelation plots look like.
 
-In the example below the `conv` function is used to auto-correlate the sine wave. Notice that the `conv` function
+In the example below the `conv` function is used to autocorrelate the sine wave. Notice that the `conv` function
 is simply correlating the sine wave with itself.
 
+The plot has a very distinct structure to it. As the sine wave is slid across a copy of it self the correlation
+moves up and down in increasing intensity until it reaches a peak. This peak is directly in the center and is the
+the point where the sine waves are directly lined up. Following the peak the correlation moves up and down in decreasing
+intensity as the sine wave slides farther away from being directly lined up.
 
 [source,text]
 ----
@@ -583,8 +591,10 @@ let(a=sin(sequence(256, 0, 6)),
 image::images/math-expressions/signal-autocorrelation.png[]
 
 
-
-In the example below auto-correlation is performed with the vector of pure noise.
+In the example below autocorrelation is performed with the vector of pure noise. Notice that the autocorrelation
+plot has a very different plot the sine wave. In this plot long period of low intensity correlation that appears
+to be random. Then in the center a peak of high intensity where vectors are directly lined up. This is followed by
+another long period of low intensity correlation.
 
 
 [source,text]
@@ -596,7 +606,10 @@ let(a=sample(uniformDistribution(-1.5, 1.5), 256),
 image::images/math-expressions/noise-autocorrelation.png[]
 
 
-In the example below auto-correlation is performed with the vector with sine wave hidden within the noise.
+In the example below autocorrelation is performed with the vector with sine wave hidden within the noise.
+Notice that this plot shows a very clear signs of structure which is similar to autocorrelation plot of the
+pure signal. The correlation is less intense due to noise but the shape of the correlation plot suggests
+strongly that there is an underlying signal hidden within the noise.
 
 [source,text]
 ----
