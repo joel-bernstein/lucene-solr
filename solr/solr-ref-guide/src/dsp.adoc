@@ -649,7 +649,7 @@ But it is important to understand how the `fft` function formats the complex num
 The `fft` function returns a `matrix` with two rows. The first row in the matrix is the *real*
 part of the complex result. The second row in the matrix is the imaginary part of the complex result.
 
-The `rowAt` function can be used to access the rows so they can be processed a vectors.
+The `rowAt` function can be used to access the rows so they can be processed as vectors.
 This approach was taken because all of the vector math functions operate on vectors of real numbers.
 Rather then introducing complex number abstraction into the language, the `fft` result is
 represented as two vectors of real numbers.
@@ -657,27 +657,54 @@ represented as two vectors of real numbers.
 
 === Fast Fourier Transform Examples
 
+In the first example the `fft` function is called on the sine wave used in the autocorrelation example.
+
+The results of the `fft` function is a matrix. The `rowAt` function is used to return the first row of
+the matrix which is a vector with real values of the fft response.
+
+The plot of the real values of the `fft` response is shown below. Notice there are two
+peaks on opposite sides of the plot. The plot is actually showing a mirrored response. The left side
+of the plot is an exact mirror of the right side. This is expected when an fft is run on real rather then
+complex data.
+
+Also notice that the `fft` has accumulated significant power in a single peak. This is the power associated with
+the specific frequency of the sine wave. The vast majority of frequencies in the plot have close to 0 power
+associated with them. This `fft` shows a clear signal with very low levels of noise.
 
 [source,text]
 ----
 let(a=sin(sequence(256, 0, 6)),
     b=fft(a),
-    real=rowAt(b, 0))
+    c=rowAt(b, 0))
 ----
 
 
 image::images/math-expressions/signal-fft.png[]
 
 
+In the second example the `fft` function is called on a vector of random data similar to one used in the
+autocorrelation example. The plot of the real values of the `fft` response is shown below.
+
+Notice that is this response there is no clear peak. Instead all frequencies have accumulated random level of
+power. This `fft` shows no clear sign of signal and appears to be noise.
+
+
 [source,text]
 ----
 let(a=sample(uniformDistribution(-1.5, 1.5), 256),
     b=fft(a),
-    real=rowAt(b, 0))
+    c=rowAt(b, 0))
 ----
 
 image::images/math-expressions/noise-fft.png[]
 
+
+In the third example the `fft` function is called on the same signal hidden with noise that was used for
+the autocorrelation example. The plot of the real values of the `fft` response is shown below.
+
+Notice that there are two clear mirrored peaks, at the same locations as the `fft` on the pure signal. But
+there is also now considerable noise on the frequencies. The `fft` has found the signal and but also
+signals that there is considerable noise along with the signal.
 
 [source,text]
 ----
@@ -685,7 +712,7 @@ let(a=sin(sequence(256, 0, 6)),
     b=sample(uniformDistribution(-1.5, 1.5), 256),
     c=ebeAdd(a, b),
     d=fft(c),
-    real=rowAt(d, 0))
+    e=rowAt(d, 0))
 ----
 
 image::images/math-expressions/hidden-signal-fft.png[]
