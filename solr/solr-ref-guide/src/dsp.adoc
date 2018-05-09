@@ -584,7 +584,7 @@ This is the autocorrelation plot of a pure signal.
 [source,text]
 ----
 let(a=sin(sequence(256, 0, 6)),
-    d=conv(a, rev(a)),
+    b=conv(a, rev(a)),
 ----
 
 image::images/math-expressions/signal-autocorrelation.png[]
@@ -600,7 +600,7 @@ This is the autocorrelation plot of pure noise.
 [source,text]
 ----
 let(a=sample(uniformDistribution(-1.5, 1.5), 256),
-    d=conv(a, rev(a)),
+    b=conv(a, rev(a)),
 ----
 
 image::images/math-expressions/noise-autocorrelation.png[]
