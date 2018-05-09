@@ -658,12 +658,12 @@ represented as two vectors of real numbers.
 === Fast Fourier Transform Examples
 
 
- [source,text]
- ----
- let(a=sin(sequence(256, 0, 6)),
-     b=fft(a),
-     real=rowAt(b, 0))
- ----
+[source,text]
+----
+let(a=sin(sequence(256, 0, 6)),
+    b=fft(a),
+    real=rowAt(b, 0))
+----
 
 
 image::images/math-expressions/signal-fft.png[]
