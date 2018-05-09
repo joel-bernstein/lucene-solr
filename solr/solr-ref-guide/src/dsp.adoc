@@ -623,3 +623,14 @@ image::images/math-expressions/hidden-signal-autocorrelation.png[]
 
 
 == Discrete Fourier Transform
+
+The functions described earlier in the section of the user guide all operate on signals in time domain. The Discrete
+Fourier Transform translates a time domain signal into the frequency domain.
+
+image::images/math-expressions/signal-fft.png[]
+
+image::images/math-expressions/noise-fft.png[]
+
+image::images/math-expressions/hidden-signal-fft.png[]
+
+
