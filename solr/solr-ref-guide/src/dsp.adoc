@@ -624,12 +624,69 @@ image::images/math-expressions/hidden-signal-autocorrelation.png[]
 
 == Discrete Fourier Transform
 
-The functions described earlier in the section of the user guide all operate on signals in time domain. The Discrete
-Fourier Transform translates a time domain signal into the frequency domain.
+The functions described earlier in the section of the user guide all operate on signals in time domain. In the time
+domain the X axis is time and the Y axis is the quantity of some value at a specific point in time.
+
+The discrete Fourier Transform translates a time domain signal into the frequency domain.
+In the frequency domain the X axis is frequency, and Y axis is the accumulated power at a specific frequency.
+
+The basic principle is that every time domain signal is composed of one or more signals (sine waves)
+at different frequencies. The Discrete Fourier Transform decomposes a single time domain signal into its component
+frequencies and measures the power at each frequency.
+
+The discrete Fourier Transform has many important uses. In the example below discrete Fourier transform is used for
+to determine if a signal has structure or if it is purely random.
+
+=== Complex Result
+
+The `fft` function performs the discrete Fourier Transform on a vector of *real* data. The result
+of the `fft` function is returned as *complex* numbers. A complex number has two parts a *real* and
+an *imaginary* part. The imaginary part of the complex number is ignored in the examples below but there
+are many tutorials about the FFT and complex numbers available online.
+
+But it is important to understand how the `fft` function formats the complex numbers in the result.
+
+The `fft` function returns a `matrix` with two rows. The first row in the matrix is the *real*
+part of the complex result. The second row in the matrix is the imaginary part of the complex result.
+
+The `rowAt` function can be used to access the rows so they can be processed a vectors.
+This approach was taken because all of the vector math functions operate on vectors of real numbers.
+Rather then introducing complex number abstraction into the language, the `fft` result is
+represented as two vectors of real numbers.
+
+
+=== Fast Fourier Transform Examples
+
+
+ [source,text]
+ ----
+ let(a=sin(sequence(256, 0, 6)),
+     b=fft(a),
+     real=rowAt(b, 0))
+ ----
+
 
 image::images/math-expressions/signal-fft.png[]
 
+
+[source,text]
+----
+let(a=sample(uniformDistribution(-1.5, 1.5), 256),
+    b=fft(a),
+    real=rowAt(b, 0))
+----
+
 image::images/math-expressions/noise-fft.png[]
+
+
+[source,text]
+----
+let(a=sin(sequence(256, 0, 6)),
+    b=sample(uniformDistribution(-1.5, 1.5), 256),
+    c=ebeAdd(a, b),
+    d=fft(c),
+    real=rowAt(d, 0))
+----
 
 image::images/math-expressions/hidden-signal-fft.png[]
 
